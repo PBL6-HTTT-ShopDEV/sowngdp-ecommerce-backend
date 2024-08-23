@@ -1,3 +1,4 @@
+require("dotenv").config();
 const compression = require("compression");
 const express = require("express");
 const { default: helmet } = require("helmet");
@@ -10,15 +11,22 @@ app.use(helmet());
 app.use(compression());
 
 // Init DB
-
+require("./dbs/init.mongodb");
+/*
+const { checkOverLoad } = require("./helpers/check.connect");
+checkOverLoad();
+*/
 // Init routes
-app.get("/", (req, res) => {
+app.use("/", require("./routers"));
+/*
+ app.get("/", (req, res) => {
   const strsForTestCompression = "Hello World";
   return res.status(200).json({
     message: "Welcom to my first RestfulAPI server by NodeJS",
     metadata: strsForTestCompression.repeat(1000),
   });
 });
+*/
 // Handle errors
 
 module.exports = app;
