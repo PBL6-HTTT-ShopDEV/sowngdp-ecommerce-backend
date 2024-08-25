@@ -3,6 +3,9 @@
 
 const { model, Schema, Types, Collection } = require("mongoose");
 
+const DOCUMENT_NAME = "Shop";
+const COLLECTION_NAME = "Shops";
+
 // Declare the Schema of the Mongo model
 var shopSchema = new mongoose.Schema(
   {
@@ -38,4 +41,4 @@ var shopSchema = new mongoose.Schema(
 );
 
 //Export the model
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model(DOCUMENT_NAME, userSchema);
