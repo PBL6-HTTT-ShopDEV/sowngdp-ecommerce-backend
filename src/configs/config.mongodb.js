@@ -1,4 +1,4 @@
-/*
+"use strict";
 const dev = {
     app: {
         port: process.env.DEV_APP_PORT || 3000,
@@ -27,7 +27,7 @@ const config = { dev, production };
 const env = process.env.NODE_ENV || 'dev'
 
 module.exports = config[env];
-*/
+/*
 "use strict";
 // eslint-disable-line
 
@@ -61,3 +61,4 @@ const config = { dev, pro };
 const env = process.env.NODE_ENV || "dev";
 console.log(`Current environment: ${env}`, config[env]);
 module.exports = config[env];
+*/

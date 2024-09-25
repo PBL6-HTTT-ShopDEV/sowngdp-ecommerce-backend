@@ -17,27 +17,25 @@ const tourSchema = new Schema({
         type: Number, 
         required: true 
     },
-    start_date: { 
-        type: Date, 
-        required: true 
-    },
-    end_date: { 
-        type: Date, 
-        required: true 
-    },
     created_by: { 
         type: Schema.Types.ObjectId, 
-        ref: "User", 
+        ref: "Account", 
         required: true 
     }, // Reference to User (admin who created the tour)
     categories: [{ 
         type: Schema.Types.ObjectId, 
-        ref: "Category" 
+        ref: "Category" ,
+        required: false
     }], // Reference to Categories
     reviews: [{ 
         type: Schema.Types.ObjectId, 
-        ref: "Review" 
+        ref: "Review",
+        required: false 
     }], // Reference to Reviews
+    average_review_star: { 
+        type: Number, 
+        default: 0 
+    }, 
     created_at: { 
         type: Date, 
         default: Date.now 
@@ -45,6 +43,26 @@ const tourSchema = new Schema({
     destination: { 
         type: String, 
         required: true 
+    },
+    duration: { 
+        type: String, 
+        required: true 
+    },
+    max_group_size: { 
+        type: Number, 
+        required: true 
+    },
+    image_cover: { 
+        type: String, 
+        required: true, 
+    },
+    thumbnail: { 
+        type: String, 
+        required: true 
+    },
+    images: {
+        type: [String],
+        default: [],
     },
 }
 , {

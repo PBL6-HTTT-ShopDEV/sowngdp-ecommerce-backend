@@ -1,13 +1,12 @@
 'use strict'
 
 const mongoose = require('mongoose');
-// const { db: { protocol, username, password, dbName } } = require('../configs/config.mongodb');
-// const connectString = `${protocol}://${username}:${password}@${dbName}.ikjhbp3.mongodb.net/?retryWrites=true&w=majority`;
-// Sown code is replaced by the following code:
-const {
-    db: { host, name, port },
-  } = require("../configs/config.mongodb");
-const connectString = `mongodb://${host}:${port}/${name}`;
+const { db: { protocol, username, password, dbName } } = require('../configs/config.mongodb');
+let user_name = encodeURIComponent(username);
+let pass_word = encodeURIComponent(password);
+console.log(user_name)
+console.log(pass_word)
+const connectString = `${protocol}://${user_name}:${pass_word}@${dbName}.5ixeh.mongodb.net/?retryWrites=true&w=majority&appName=Tour-booking`;
 
 class Database {
     constructor() {
