@@ -54,15 +54,6 @@ class TourController {
         }
     }
 
-
-    // static createTour = async (req, res, next) => {
-    //     const tour = await TourService.createTour(req.body);
-    //     return new Success({
-    //         message: 'Create tour success!',
-    //         metadata: tour,
-    //     }).send(res);
-    // }
-
     static async updateTour(req, res, next) {
         const tour = await TourService.updateTour(req.params.id, req.body);
         return new Success({

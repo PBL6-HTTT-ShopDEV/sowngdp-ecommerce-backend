@@ -134,16 +134,6 @@ const authenticationV2 = async (req, res, next) => {
     if (!userId) throw new AuthFailureError('Invalid Request');
     const keyStore = await KeyTokenService.findByUserId(userId);
     if (!keyStore) throw new NotFoundError('Invalid Request');
-    // if (req.headers[HEADER.REFESHTOKEN]) {
-    //     const refreshToken = req.headers[HEADER.REFESHTOKEN];
-    //     const decodeUser = JWT.verify(refreshToken, keyStore.privateKey);
-    //     if(userId !== decodeUser.userId) throw new AuthFailureError('Invalid UserId');
-    //     req.keyStore = keyStore;
-    //     key.user = decodeUser;
-    //     key.refreshToken = refreshToken
-    //     return next();
-    // }
-
     const accessToken = req.headers[HEADER.AUTHORIZATION];
     if(!accessToken) throw new AuthFailureError('Invalid Request');
     console.log('accessToken::::::::::::::', accessToken);

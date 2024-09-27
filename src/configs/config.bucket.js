@@ -1,5 +1,5 @@
 "use strict";
-
+require("dotenv").config();
 const dev = {
     bucket: {
         name: process.env.AWS_BUCKET_NAME,
@@ -11,10 +11,10 @@ const dev = {
 
 const production = {
     bucket: {
-        name: process.env.PRO_BUCKET_NAME,
-        region: process.env.PRO_BUCKET_REGION,
-        accessKeyId: process.env.PRO_BUCKET_ACCESS_KEY_ID,
-        secretAccessKey: process.env.PRO_BUCKET_SECRET_ACCESS_KEY,
+        name: process.env.AWS_BUCKET_NAME,
+        region: process.env.AWS_REGION,
+        accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     }
 }
 

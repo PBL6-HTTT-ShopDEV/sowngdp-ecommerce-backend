@@ -24,11 +24,14 @@ class S3 {
         if (!S3.instance) {
             S3.instance = new S3();
         }
-
         return S3.instance;
+    }
+
+    // Remove 'static' from here
+    async upload(params) {
+        return this.s3.upload(params).promise();
     }
 }
 
 const instanceS3 = S3.getInstance();
-
 module.exports = instanceS3;

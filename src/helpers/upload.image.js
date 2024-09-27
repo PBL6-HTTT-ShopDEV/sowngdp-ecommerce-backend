@@ -13,16 +13,14 @@ class ImageService {
                 Key: `images/${Date.now()}_${file.originalname}`,
                 Body: file.buffer,
                 ContentType: file.mimetype,
-                ACL: 'public-read',
+                // ACL: 'public-read',
             };
-
-            return s3.upload(params).promise();
+            // Call s3.upload(params) without .promise()
+            return s3.upload(params);
         });
 
         const uploadResults = await Promise.all(uploadPromises);
-
         const imageUrls = uploadResults.map((result) => result.Location);
-
         return imageUrls;
     }
 
@@ -32,11 +30,10 @@ class ImageService {
             Key: `images/${Date.now()}_${file.originalname}`,
             Body: file.buffer,
             ContentType: file.mimetype,
-            ACL: 'public-read',
+            // ACL: 'public-read',
         };
-
-        const result = await s3.upload(params).promise();
-
+        // Call s3.upload(params) without .promise()
+        const result = await s3.upload(params);
         return result.Location;
     }
 }

@@ -10,9 +10,9 @@ router.post('/account/signup', asyncHandler(accessController.signUp));
 router.post('/account/login', asyncHandler(accessController.logIn));
 
 
-router.use(asyncHandler(authenticationV2));
-router.post('/account/logout', asyncHandler(accessController.logOut));
-router.post('/account/handlerRefreshToken', asyncHandler(accessController.handlerRefreshToken));
+// router.use(asyncHandler(authenticationV2));
+router.post('/account/logout', asyncHandler(authenticationV2), asyncHandler(accessController.logOut));
+router.post('/account/handlerRefreshToken', asyncHandler(authenticationV2), asyncHandler(accessController.handlerRefreshToken));
 
 
 module.exports = router;

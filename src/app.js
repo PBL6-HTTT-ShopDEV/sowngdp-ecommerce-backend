@@ -1,6 +1,5 @@
 const compression = require('compression');
 const express = require('express');
-const fileUpload = require('express-fileupload');
 const { default: helmet } = require('helmet');
 const app = express();
 const morgan = require('morgan');
@@ -9,7 +8,6 @@ var bodyParser = require('body-parser')
 
 
 //init middleWares
-app.use(fileUpload());
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(compression());

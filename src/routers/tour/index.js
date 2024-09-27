@@ -12,15 +12,18 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
 });  
 
-router.get('/tour', asyncHandler(tourController.getAllTour));
+router.get('/tours', asyncHandler(tourController.getAllTour));
 router.get('/tour/:id', asyncHandler(tourController.getTourById));
 const createTourUpload = upload.fields([
     { name: 'image_cover', maxCount: 1 },
     { name: 'thumbnail', maxCount: 1 },
     { name: 'images', maxCount: 10 }, // Adjust maxCount as needed
   ]);
+
+
+router.use(asyncHandler(authenticationV2));
 router.post(
-    '/tours',
+    '/tour',
     createTourUpload,
     asyncHandler(tourController.createTour)
 );

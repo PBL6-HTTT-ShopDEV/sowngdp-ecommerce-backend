@@ -16,10 +16,10 @@ const production = {
         port: process.env.PRO_APP_PORT || 3000,
     },
     db: {
-        protocol: process.env.PRO_DB_PROTOCOL,
-        username: process.env.PRO_DB_USERNAME,
-        password: process.env.PRO_DB_PASSWORD,
-        dbName: process.env.PRO_DB_NAME
+        protocol: process.env.PROD_DB_PROTOCOL,
+        username: process.env.PROD_DB_USERNAME,
+        password: process.env.PROD_DB_PASSWORD,
+        dbName: process.env.PROD_DB_NAME
     }
 }
 

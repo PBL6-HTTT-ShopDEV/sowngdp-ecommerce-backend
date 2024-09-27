@@ -34,7 +34,7 @@ class TourService {
         // Upload thumbnail
         if (thumbnailFile) {
             const thumbnailUrl = await ImageService.uploadImage(thumbnailFile);
-            tourData.thumnail = thumbnailUrl;
+            tourData.thumbnail = thumbnailUrl;
         } else {
             throw new Error('Thumbnail is required');
         }
@@ -48,7 +48,7 @@ class TourService {
         }
 
         // Save the tour data to the database
-        const tour = await TourRepo.createTour(tourData);
+        const tour = await tourRepo.createTour(tourData);
 
         return tour;
     }
