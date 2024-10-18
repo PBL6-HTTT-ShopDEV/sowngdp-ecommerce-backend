@@ -20,6 +20,7 @@ const createTourUpload = upload.fields([
     { name: 'images', maxCount: 10 }, // Adjust maxCount as needed
   ]);
 
+router.get('/tours/:location/:price/:category', asyncHandler(tourController.getTourByCategoryAndLocationAndPrice));
 
 router.use(asyncHandler(authenticationV2));
 router.post(

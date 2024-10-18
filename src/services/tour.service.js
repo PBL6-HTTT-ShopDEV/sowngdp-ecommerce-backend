@@ -69,6 +69,19 @@ class TourService {
         }
         return tour;
     }
+
+    static async getTourByCategory(categoryId) {
+        return await tourRepo.getTourByCategory(categoryId);
+    }
+
+    static async getTourByLocation(locationId) {
+        return await tourRepo.getTourByLocation(locationId);
+    }
+
+    static async getTourByPrice(price) {
+        return await tourRepo.getTourByPrice(price);
+    }
+
 }
 
 module.exports = TourService;

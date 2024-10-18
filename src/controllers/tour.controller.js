@@ -69,6 +69,59 @@ class TourController {
             metadata: tour,
         }).send(res);
     }
+
+    // example json body for delete tour
+    // {
+    //     "tourId": "5f7d2e9f5b1b4b0017f4e0f4"
+    // }
+
+    static async getTourByCategory(req, res, next) {
+        const tours = await TourService.getTourByCategory(req.params.categoryId);
+        return new Success({
+            message: 'Get tour by category success!',
+            metadata: tours,
+        }).send(res);
+    }
+
+    static async getTourByLocation(req, res, next) {
+        const tours = await TourService.getTourByLocation(req.params.locationId);
+        return new Success({
+            message: 'Get tour by location success!',
+            metadata: tours,
+        }).send(res);
+    }
+
+    static async getTourByPrice(req, res, next) {
+        const tours = await TourService.getTourByPrice(req.params.price);
+        return new Success({
+            message: 'Get tour by price success!',
+            metadata: tours,
+        }).send(res);
+    }
+
+    static async getTourByCategoryAndLocation(req, res, next) {
+        const tours = await TourService.getTourByCategoryAndLocation(req.params.categoryId, req.params.locationId);
+        return new Success({
+            message: 'Get tour by category and location success!',
+            metadata: tours,
+        }).send(res);
+    }
+
+    static async getTourByCategoryAndLocationAndPrice(req, res, next) {
+        const tours = await TourService.getTourByCategoryAndLocationAndPrice(req.params.categoryId, req.params.locationId, req.params.price);
+        return new Success({
+            message: 'Get tour by category, location and price success!',
+            metadata: tours,
+        }).send(res);
+    }
+
+    // example json body for get tour by category, location and price
+    // {
+    //     "categoryId": "5f7d2e9f5b1b4b0017f4e0f4",
+    //     "locationId": "5f7d2e9f5b1b4b0017f4e0f4",
+    //     "price": 100
+    // }
+    
 }
 
 module.exports = TourController;
