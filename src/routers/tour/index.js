@@ -1,36 +1,45 @@
-'use strict';
+"use strict";
 
-const express = require('express');
-const multer = require('multer');
-const { asyncHandler, authenticationV2 } = require('../../auth/authUtils');
-const tourController = require('../../controllers/tour.controller');
+const express = require("express");
+const multer = require("multer");
+const { asyncHandler, authenticationV2 } = require("../../auth/authUtils");
+const TourController = require("../../controllers/tour.controller");
+const BookingController = require("../../controllers/booking.controller");
 const router = express.Router();
 
 // Define `upload` before using it
 const upload = multer({
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
-});  
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+});
 
-router.get('/tours', asyncHandler(tourController.getAllTour));
-router.get('/tour/:id', asyncHandler(tourController.getTourById));
+router.get("/tours", asyncHandler(TourController.getAllTour));
+router.get("/tour/:id", asyncHandler(TourController.getTourById));
 const createTourUpload = upload.fields([
-    { name: 'image_cover', maxCount: 1 },
-    { name: 'thumbnail', maxCount: 1 },
-    { name: 'images', maxCount: 10 }, // Adjust maxCount as needed
-  ]);
+  { name: "image_cover", maxCount: 1 },
+  { name: "thumbnail", maxCount: 1 },
+  { name: "images", maxCount: 10 }, // Adjust maxCount as needed
+]);
 
-router.get('/tours/:location/:price/:category', asyncHandler(tourController.getTourByCategoryAndLocationAndPrice));
-
-router.use(asyncHandler(authenticationV2));
-router.post(
-    '/tour',
-    createTourUpload,
-    asyncHandler(tourController.createTour)
+router.get(
+  "/tours/:location/:price/:category",
+  asyncHandler(TourController.getTourByCategoryAndLocationAndPrice)
 );
 
-router.put('/tour/:id', asyncHandler(tourController.updateTour));
-router.delete('/tour/:id', asyncHandler(tourController.deleteTour));
+router.use(asyncHandler(authenticationV2));
+router.post("/tour", createTourUpload, asyncHandler(TourController.createTour));
+
+router.put("/tour/:id", asyncHandler(TourController.updateTour));
+router.delete("/tour/:id", asyncHandler(TourController.deleteTour));
+/// example json data for delete tour combine url
+/// example url for delete tour by id : http://localhost:3000/v1/api/tour/5f3d9f7b2e6d2d0017d5b9d1
+// {
+//     "tour_id": "5f3d9f7b2e6d2d0017d5b9d1"
+// }
+
+// tour booking routers
+
+router.get("/bookings", asyncHandler(BookingController.getAllBooking));
 
 module.exports = router;
 // Compare this snippet from src/routers/access/index.js:
