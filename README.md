@@ -66,7 +66,6 @@ go to dashboard > project > environment
 - [Pug](https://pugjs.org/api/getting-started.html) - High performance template engine
 - [JSON Web Token](https://jwt.io/) - Security token
 - [esbuild](https://esbuild.github.io/) - An extremely fast bundler for the web
-- [Stripe](https://stripe.com/) - Online payment API
 - [Postman](https://www.getpostman.com/) - API testing
 - [Mailtrap](https://mailtrap.io/) & [Mailgun](https://www.mailgun.com/) - Email delivery platform
 - [Render](https://render.com/) - Cloud platform
