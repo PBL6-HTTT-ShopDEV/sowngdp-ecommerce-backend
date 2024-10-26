@@ -14,8 +14,23 @@ class CategoryService {
   }
 
   static async createCategory(data) {
+    console.log(data);
     const category = await categoryModel.create(data);
+    if (!category) {
+      throw new Error("Create category failed!");
+    }
     return category;
+  }
+
+  static async createMultipleCategory(data) {
+    const options = {
+      ordered: true,
+    };
+    const categories = await categoryModel.insertMany(data, options);
+    if (!categories) {
+      throw new Error("Create multiple category failed!");
+    }
+    return categories;
   }
 
   static async updateCategory(id, data) {
@@ -30,3 +45,5 @@ class CategoryService {
     return category;
   }
 }
+
+module.exports = CategoryService;

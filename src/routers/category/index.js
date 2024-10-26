@@ -1,19 +1,25 @@
-'use strict';
+"use strict";
 
-const express = require('express');
+const express = require("express");
 
-const categoryController = require('../../controllers/category.controller');
+const categoryController = require("../../controllers/category.controller");
+const { asyncHandler } = require("../../auth/authUtils");
 
 const router = express.Router();
 
-router.get('/categories', categoryController.getAllCategory);
+router.get("/categories", asyncHandler(categoryController.getAllCategory));
 
-router.get('/category/:id', categoryController.getCategoryById);
+router.get("/category/:id", asyncHandler(categoryController.getCategoryById));
 
-router.post('/category', categoryController.createCategory);
+router.post(
+  "/categoriess",
+  asyncHandler(categoryController.createMultipleCategory)
+);
 
-router.put('/category/:id', categoryController.updateCategory);
+router.post("/category", asyncHandler(categoryController.createCategory));
 
-router.delete('/category/:id', categoryController.deleteCategory);
+router.put("/category/:id", asyncHandler(categoryController.updateCategory));
+
+router.delete("/category/:id", asyncHandler(categoryController.deleteCategory));
 
 module.exports = router;
