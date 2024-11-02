@@ -13,49 +13,23 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
 });
 
-router.get("/tours", asyncHandler(TourController.getAllTour));
-router.get("/tour/:id", asyncHandler(TourController.getTourById));
 const createTourUpload = upload.fields([
   { name: "image_cover", maxCount: 1 },
   { name: "thumbnail", maxCount: 1 },
   { name: "images", maxCount: 10 }, // Adjust maxCount as needed
 ]);
 
-router.get(
-  "/tours/:location/:price/:category",
-  asyncHandler(TourController.getTourByCategoryAndLocationAndPrice)
-);
-router.get(
-  "/tours/:location/:category",
-  asyncHandler(TourController.getTourByCategoryAndLocation)
-);
-router.get("/tours/:location", asyncHandler(TourController.getTourByLocation));
-router.get(
-  "/tours/:categoryId",
-  asyncHandler(TourController.getTourByCategory)
-); /// example url for get tour by category : http://localhost:3055/v1/api/tours/5f3d9f7b2e6d2d0017d5b9d1
-router.get("/tours/:price", asyncHandler(TourController.getTourByPrice));
-router.get(
-  "/tours/:category/:price",
-  asyncHandler(TourController.getTourByCategoryAndPrice)
-);
-router.get(
-  "/tours/:location/:price",
-  asyncHandler(TourController.getTourByLocationAndPrice)
-);
+// router.get("/tours", asyncHandler(TourController.getAllTour));
+router.get("/tour/:id", asyncHandler(TourController.getTourById));
+
+// example url = "http://localhost:3055/v1/api/tours?page=1&limit=10&categoryId=5f3d9f7b2e6d2d0017d5b9d1&price=1000000"
+router.get("/tours", asyncHandler(TourController.getTours));
 
 router.use(asyncHandler(authenticationV2));
 router.post("/tour", createTourUpload, asyncHandler(TourController.createTour));
 
 router.put("/tour/:id", asyncHandler(TourController.updateTour));
 router.delete("/tour/:id", asyncHandler(TourController.deleteTour));
-/// example json data for delete tour combine url
-/// example url for delete tour by id : http://localhost:3055/v1/api/tour/5f3d9f7b2e6d2d0017d5b9d1
-// {
-//     "tour_id": "5f3d9f7b2e6d2d0017d5b9d1"
-// }
-
-// tour booking routers
 
 router.get("/bookings", asyncHandler(BookingController.getAllBooking));
 

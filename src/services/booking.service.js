@@ -10,13 +10,18 @@ class BookingService {
         return bookings;
     }
 
+    static async getBookings(query) {
+        const bookings = await BookingRepo.getBookings(query);
+        return bookings;
+    }
+
     static async getBookingById(id) {
         const booking = await BookingRepo.getBookingById(id);
         return booking;
     }
 
-    static async createBooking(data) {
-        const booking = await BookingRepo.createBooking(data);
+    static async createBooking(data, userId) {
+        const booking = await BookingRepo.createBooking(data, userId);
         return booking;
     }
 

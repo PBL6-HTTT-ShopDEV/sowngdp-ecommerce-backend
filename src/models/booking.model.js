@@ -29,3 +29,5 @@ const bookingSchema = new mongoose.Schema({
         default: true
     }
 });
+
+module.exports = mongoose.model(DOCUMENT_NAME, bookingSchema, COLLECTION_NAME);

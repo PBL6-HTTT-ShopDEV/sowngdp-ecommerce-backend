@@ -77,4 +77,4 @@ const tourSchema = new Schema(
 );
 
 // Export the model
-module.exports = mongoose.model(DOCUMENT_NAME, tourSchema);
+module.exports = mongoose.model(DOCUMENT_NAME, tourSchema, COLLECTION_NAME);

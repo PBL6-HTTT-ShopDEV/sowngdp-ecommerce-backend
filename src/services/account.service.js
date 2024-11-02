@@ -7,6 +7,8 @@ class AccountService {
     } }) => {
         return await accountModel.findOne({ email }).select(select).lean();
     }
+
+    
 }
 
 const findByEmail = async ({ email, select = {
