@@ -1,11 +1,24 @@
 'use strict';
 
 const express = require('express');
-
+const multer = require('multer');
 const router = express.Router();
+const AccountController = require('../../controllers/account.controller');
+const { asyncHandler, authenticationV2 } = require("../../auth/authUtils");
 
-router.get('/', (req, res) => {
-    res.send('Account');
-    });
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+  });
+  
+const createAvatarUpload = upload.fields([
+    { name: "avatar", maxCount: 1 },
+  ]);
+
+router.post('/account/create', createAvatarUpload, asyncHandler(AccountController.createAccount));
+router.put('/account/update', createAvatarUpload, asyncHandler(AccountController.updateAccount)); // example: /account/update?userId=123
+router.delete('/account/delete', asyncHandler(AccountController.deleteAccount)); // example: /account/delete?userId=123
+router.get('/account/get', asyncHandler(AccountController.getAccountById)); // example: /account/get?userId=123
+router.get('/account/get-all', asyncHandler(AccountController.getAccountByQuery));
 
 module.exports = router;

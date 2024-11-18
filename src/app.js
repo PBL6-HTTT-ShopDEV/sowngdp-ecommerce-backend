@@ -2,6 +2,7 @@ const compression = require("compression");
 const express = require("express");
 const { default: helmet } = require("helmet");
 const app = express();
+const cors = require("cors");
 const morgan = require("morgan");
 require("dotenv").config();
 // var bodyParser = require("body-parser");
@@ -29,6 +30,8 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+//allow cors
+// app.use(cors({ origin: "http://localhost:5173" }));
 
 //init DB
 require("./dbs/init.mongodb");

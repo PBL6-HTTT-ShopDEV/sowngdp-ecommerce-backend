@@ -20,18 +20,18 @@ const createTourUpload = upload.fields([
 ]);
 
 // router.get("/tours", asyncHandler(TourController.getAllTour));
-router.get("/tour/:id", asyncHandler(TourController.getTourById));
+router.get("/tourbyid", asyncHandler(TourController.getTourById)); // example: /tourbyid?tourId=123
 
 // example url = "http://localhost:3055/v1/api/tours?page=1&limit=10&categoryId=5f3d9f7b2e6d2d0017d5b9d1&price=1000000"
-router.get("/tours", asyncHandler(TourController.getTours));
+router.get("/tour", asyncHandler(TourController.getTours)); // example: /tour?page=1&limit=10&categoryId=5f3d9f7b2e6d2d0017d5b9d1&price=1000000
 
-router.use(asyncHandler(authenticationV2));
+// router.use();
 router.post("/tour", createTourUpload, asyncHandler(TourController.createTour));
 
-router.put("/tour/:id", asyncHandler(TourController.updateTour));
-router.delete("/tour/:id", asyncHandler(TourController.deleteTour));
+router.put("/tour", asyncHandler(TourController.updateTour)); // example: /tour?tourId=123
+router.delete("/tour", asyncHandler(TourController.deleteTour)); // example: /tour?tourId=123
 
-router.get("/bookings", asyncHandler(BookingController.getAllBooking));
+router.get("/bookings", asyncHandler(authenticationV2), asyncHandler(BookingController.getAllBooking));
 
 module.exports = router;
 // Compare this snippet from src/routers/access/index.js:

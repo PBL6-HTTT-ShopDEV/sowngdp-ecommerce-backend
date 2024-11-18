@@ -18,6 +18,11 @@ class BookingRepo {
         return booking;
     }
 
+    static async getBookingByTourId(tourId) {
+        const booking = await bookingModel.find({ tour: tourId }).lean();
+        return booking;
+    }
+
     static async createBooking(data, userId) {
         const booking = await bookingModel.create({ ...data, user: userId });
         return booking;

@@ -20,6 +20,12 @@ class BookingService {
         return booking;
     }
 
+    static async getBookingByTourId(tourId) {
+        console.log(tourId);
+        const booking = await BookingRepo.getBookingByTourId(tourId);
+        return booking;
+    }
+
     static async createBooking(data, userId) {
         const booking = await BookingRepo.createBooking(data, userId);
         return booking;

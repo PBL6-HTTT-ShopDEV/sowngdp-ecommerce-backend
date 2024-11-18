@@ -25,17 +25,6 @@ class TourController {
     }).send(res);
   }
 
-  // static async getTourByPage(req, res, next) {
-  //   const tours = await TourService.getTourByPage(
-  //     req.params.page,
-  //     req.params.limit
-  //   );
-  //   return new Success({
-  //     message: "Get tour by page success!",
-  //     metadata: tours,
-  //   }).send(res);
-  // }
-
   static async getTours(req, res, next) {
       const { page, limit, categoryId, price } = req.query;
       console.log(page,limit, categoryId, price);
@@ -72,8 +61,6 @@ class TourController {
 
   static async createTour(req, res, next) {
     try {
-      console.log("req.body:", req.body);
-      console.log("req.files:", req.files);
       const tourData = req.body;
       const files = req.files;
       const userId = req.headers[HEADER.CLIENT_ID];

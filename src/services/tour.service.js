@@ -4,7 +4,7 @@ const tourRepo = require("./repositories/tour.repo");
 
 const { NotFoundError } = require("../core/error.response");
 
-const ImageService = require("../helpers/upload.image");
+const FirebaseStorage = require("../helpers/firebase.storage");
 
 class TourService {
   static async getAllTour() {
@@ -38,7 +38,7 @@ class TourService {
   ) {
     // Upload image cover
     if (imageCoverFile) {
-      const imageCoverUrl = await ImageService.uploadImage(imageCoverFile);
+      const imageCoverUrl = await FirebaseStorage.uploadImage(imageCoverFile);
       tourData.image_cover = imageCoverUrl;
     } else {
       throw new Error("Image cover is required");
@@ -46,7 +46,7 @@ class TourService {
 
     // Upload thumbnail
     if (thumbnailFile) {
-      const thumbnailUrl = await ImageService.uploadImage(thumbnailFile);
+      const thumbnailUrl = await FirebaseStorage.uploadImage(thumbnailFile);
       tourData.thumbnail = thumbnailUrl;
     } else {
       throw new Error("Thumbnail is required");
@@ -54,7 +54,7 @@ class TourService {
 
     // Upload images array
     if (imageFiles.length > 0) {
-      const imageUrls = await ImageService.uploadImages(imageFiles);
+      const imageUrls = await FirebaseStorage.uploadImages(imageFiles);
       tourData.images = imageUrls;
     } else {
       tourData.images = []; // Or handle as per your requirements

@@ -1,6 +1,14 @@
 "use strict";
 
 const BookingService = require("../services/booking.service");
+const { Success } = require("../core/success.response");
+
+const HEADER = {
+  API_KEY: "x-api-key",
+  CLIENT_ID: "x-client-id",
+  AUTHORIZATION: "authorization",
+  REFESHTOKEN: "x-rtoken-id",
+};
 
 class BookingController {
   static async getAllBooking(req, res) {
@@ -31,7 +39,7 @@ class BookingController {
   }
 
   static async getBookingByTourId(req, res) {
-    const booking = await BookingService.getBookingByTourId(req.params.tourid);
+    const booking = await BookingService.getBookingByTourId(req.query.tourid);
     if (!booking) {
       throw new Error("Booking not found");
     }
