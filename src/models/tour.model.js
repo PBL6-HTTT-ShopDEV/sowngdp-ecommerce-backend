@@ -6,7 +6,11 @@ const DOCUMENT_NAME = "Tour";
 // Define the Tour Schema
 const tourSchema = new Schema(
   {
-    name: {
+    // name: {
+    //   type: String,
+    //   required: true,
+    // },
+    destination: {
       type: String,
       required: true,
     },
@@ -23,44 +27,52 @@ const tourSchema = new Schema(
       ref: "Account",
       required: [true, "Tour must belong to a user!"],
     }, // Reference to User (admin who created the tour)
-    categories: [
+    category_id: [
       {
         type: Schema.Types.ObjectId,
         ref: "Category",
         required: [true, "Tour must belong to a category!"],
       },
     ], // Reference to Categories
-    reviews: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Review",
-        required: false,
-      },
-    ], // Reference to Reviews
-    average_review_star: {
-      type: Number,
-      default: 0,
+    // reviews: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "Review",
+    //     required: false,
+    //   },
+    // ], // Reference to Reviews
+    // average_review_star: {
+    //   type: Number,
+    //   default: 0,
+    // },
+    start_date: {
+      type: Date,
+      default: Date.now,
+    },
+    end_date: {
+      type: Date,
+      default: Date.now,
     },
     created_at: {
       type: Date,
       default: Date.now,
     },
-    destination: {
+    departure_location: {
       type: String,
       required: true,
     },
-    duration: {
-      type: String,
-      required: true,
-    },
+    // duration: {
+    //   type: String,
+    //   required: true,
+    // },
     max_group_size: {
       type: Number,
       required: true,
     },
-    image_cover: {
-      type: String,
-      required: true,
-    },
+    // image_cover: {
+    //   type: String,
+    //   required: true,
+    // },
     thumbnail: {
       type: String,
       required: true,
