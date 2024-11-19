@@ -29,13 +29,7 @@ class TourService {
     return await tourRepo.getTours(page, limit, categoryId, price);
   }
 
-  static async createTour(
-    tourData,
-    imageCoverFile,
-    thumbnailFile,
-    imageFiles,
-    userId
-  ) {
+  static async createTour(tourData, imageCoverFile, thumbnailFile, imageFiles, userId) {
     // Upload image cover
     if (imageCoverFile) {
       const imageCoverUrl = await FirebaseStorage.uploadImage(imageCoverFile);
@@ -54,7 +48,7 @@ class TourService {
 
     // Upload images array
     if (imageFiles.length > 0) {
-      const imageUrls = await FirebaseStorage.uploadImages(imageFiles);
+      const imageUrls = await FirebaseStorage.uploadImage(imageFiles);
       tourData.images = imageUrls;
     } else {
       tourData.images = []; // Or handle as per your requirements
@@ -104,16 +98,8 @@ class TourService {
     return await tourRepo.getTourByCategoryAndLocation(categoryId, locationId);
   }
 
-  static async getTourByCategoryAndLocationAndPrice(
-    categoryId,
-    locationId,
-    price
-  ) {
-    return await tourRepo.getTourByCategoryAndLocationAndPrice(
-      categoryId,
-      locationId,
-      price
-    );
+  static async getTourByCategoryAndLocationAndPrice(categoryId, locationId, price) {
+    return await tourRepo.getTourByCategoryAndLocationAndPrice(categoryId, locationId, price);
   }
 
   static async getTourByCategoryAndPrice(categoryId, price) {
