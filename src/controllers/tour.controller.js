@@ -65,16 +65,11 @@ class TourController {
       const files = req.files;
       const userId = req.headers[HEADER.CLIENT_ID];
 
-      // Extract files based on field names
-      const imageCoverFile = files["image_cover"]
-        ? files["image_cover"][0]
-        : null;
       const thumbnailFile = files["thumbnail"] ? files["thumbnail"][0] : null;
       const imageFiles = files["images"] || [];
 
       const tour = await TourService.createTour(
         tourData,
-        imageCoverFile,
         thumbnailFile,
         imageFiles,
         userId
