@@ -26,17 +26,22 @@ class TourController {
   }
 
   static async getTours(req, res, next) {
-      const { page, limit, categoryId, price } = req.query;
-      console.log(page,limit, categoryId, price);
-      const tours = await TourService.getTours({ page, limit, categoryId, price });
-      return new Success({
-        message: "Get tours with pagination success!",
-        metadata: tours,
-      }).send(res);
+    const { page, limit, categoryId, price } = req.query;
+    console.log(page, limit, categoryId, price);
+    const tours = await TourService.getTours({
+      page,
+      limit,
+      categoryId,
+      price,
+    });
+    return new Success({
+      message: "Get tours with pagination success!",
+      metadata: tours,
+    }).send(res);
   }
 
   static async getTourById(req, res, next) {
-    const tour = await TourService.getTourById(req.params.id);
+    const tour = await TourService.getTourById(req.query.id);
     return new Success({
       message: "Get tour by id success!",
       metadata: tour,
