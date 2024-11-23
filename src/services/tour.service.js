@@ -19,10 +19,6 @@ class TourService {
     return tour;
   }
 
-  // static async getTourByPage(page, limit) {
-  //   return await tourRepo.getTourByPage(page, limit);
-  // }
-
   static async getTours(filter) {
     const { page, limit, categoryId, price } = filter; // Đặt giá trị mặc định cho page và limit
     console.log(page, limit, categoryId, price);

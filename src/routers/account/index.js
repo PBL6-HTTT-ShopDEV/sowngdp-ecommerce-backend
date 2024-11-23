@@ -19,6 +19,6 @@ router.post('/account/create', createAvatarUpload, asyncHandler(AccountControlle
 router.put('/account/update', createAvatarUpload, asyncHandler(AccountController.updateAccount)); // example: /account/update?userId=123
 router.delete('/account/delete', asyncHandler(AccountController.deleteAccount)); // example: /account/delete?userId=123
 router.get('/account/get', asyncHandler(AccountController.getAccountById)); // example: /account/get?userId=123
-router.get('/account/get-all', asyncHandler(AccountController.getAccountByQuery));
+router.get('/account/get-role', asyncHandler(AccountController.getAccountByQuery)); // example: /account/get-role?role=USER or /account/get-role?role=WRITER
 
 module.exports = router;

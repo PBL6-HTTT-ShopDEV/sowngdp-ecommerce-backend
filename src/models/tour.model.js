@@ -10,6 +10,10 @@ const tourSchema = new Schema(
       type: String,
       required: true,
     },
+    destination: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: true,
@@ -18,18 +22,38 @@ const tourSchema = new Schema(
       type: Number,
       required: true,
     },
-    created_by: {
-      type: Schema.Types.ObjectId,
-      ref: "Account",
-      required: [true, "Tour must belong to a user!"],
-    }, // Reference to User (admin who created the tour)
+    start_date: {
+      type: Date,
+      required: true,
+    },
+    end_date: {
+      type: Date,
+      required: true,
+    },
+    departure_location: {
+      type: String,
+      required: true,
+    },
     categories: [
       {
         type: Schema.Types.ObjectId,
         ref: "Category",
         required: [true, "Tour must belong to a category!"],
       },
-    ], // Reference to Categories
+    ],
+    image_url: {
+      type: [String],
+      default: [],
+    },
+    thumbnail_url: {
+      type: String,
+      required: true,
+    },
+    created_by: {
+      type: Schema.Types.ObjectId,
+      ref: "Account",
+      required: [true, "Tour must belong to a user!"],
+    }, // Reference to User (admin who created the tour)
     reviews: [
       {
         type: Schema.Types.ObjectId,
@@ -37,37 +61,20 @@ const tourSchema = new Schema(
         required: false,
       },
     ], // Reference to Reviews
+    bookings: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Booking",
+        require: false,
+      }
+    ],
     average_review_star: {
       type: Number,
       default: 0,
     },
-    created_at: {
-      type: Date,
-      default: Date.now,
-    },
-    destination: {
-      type: String,
-      required: true,
-    },
-    duration: {
-      type: String,
-      required: true,
-    },
     max_group_size: {
       type: Number,
       required: true,
-    },
-    image_cover: {
-      type: String,
-      required: true,
-    },
-    thumbnail: {
-      type: String,
-      required: true,
-    },
-    images: {
-      type: [String],
-      default: [],
     },
   },
   {
