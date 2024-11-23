@@ -33,6 +33,10 @@ const accountSchema = new Schema({
         type: Array,
         default: [],
     },
+    avatar: {
+        type: String,
+        required: false
+    },
     name: {
          type: String,  
          required: true 

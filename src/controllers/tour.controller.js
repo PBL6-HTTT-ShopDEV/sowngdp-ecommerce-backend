@@ -25,6 +25,16 @@ class TourController {
     }).send(res);
   }
 
+  static async getTours(req, res, next) {
+      const { page, limit, categoryId, price } = req.query;
+      console.log(page,limit, categoryId, price);
+      const tours = await TourService.getTours({ page, limit, categoryId, price });
+      return new Success({
+        message: "Get tours with pagination success!",
+        metadata: tours,
+      }).send(res);
+  }
+
   static async getTourById(req, res, next) {
     const tour = await TourService.getTourById(req.params.id);
     return new Success({
@@ -51,22 +61,15 @@ class TourController {
 
   static async createTour(req, res, next) {
     try {
-      console.log("req.body:", req.body);
-      console.log("req.files:", req.files);
       const tourData = req.body;
       const files = req.files;
       const userId = req.headers[HEADER.CLIENT_ID];
 
-      // Extract files based on field names
-      const imageCoverFile = files["image_cover"]
-        ? files["image_cover"][0]
-        : null;
       const thumbnailFile = files["thumbnail"] ? files["thumbnail"][0] : null;
       const imageFiles = files["images"] || [];
 
       const tour = await TourService.createTour(
         tourData,
-        imageCoverFile,
         thumbnailFile,
         imageFiles,
         userId

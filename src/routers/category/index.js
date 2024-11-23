@@ -18,8 +18,8 @@ router.post(
 
 router.post("/category", asyncHandler(categoryController.createCategory));
 
-router.put("/category/:id", asyncHandler(categoryController.updateCategory));
+router.put("/category", asyncHandler(categoryController.updateCategory)); // example: /category?categoryId=123
 
-router.delete("/category/:id", asyncHandler(categoryController.deleteCategory));
+router.delete("/category", asyncHandler(categoryController.deleteCategory)); // example: /category?categoryId=123
 
 module.exports = router;
