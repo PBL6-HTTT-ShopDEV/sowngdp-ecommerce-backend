@@ -21,6 +21,7 @@ class BookingController {
   }
 
   static async getBookings(req, res) {
+    const userId = req.query.userid;
     const bookings = await BookingService.getBookings(req.query);
 
     return new Success({
@@ -30,10 +31,22 @@ class BookingController {
   }
 
   static async getBookingById(req, res) {
-    const booking = await BookingService.getBookingById(req.params.id);
+    const { id, tourid, userid } = req.query;
+    const query = { id, tourid, userid };
+    const booking = await BookingService.getBookingById(query);
 
     return new Success({
       message: "Get booking by id success!",
+      metadata: booking,
+    }).send(res);
+  }
+
+  static async getBookingsByUser(req, res) {
+    const userId = req.query.userid;
+    const booking = await BookingService.getBookingByUserId(userId);
+
+    return new Success({
+      message: "Get booking by user id success!",
       metadata: booking,
     }).send(res);
   }
@@ -63,7 +76,7 @@ class BookingController {
     const bookingData = req.body;
     const userId = req.headers[HEADER.CLIENT_ID];
     const booking = await BookingService.createBooking(bookingData, userId);
-    
+
     return new Success({
       message: "Create booking success!",
       metadata: booking,

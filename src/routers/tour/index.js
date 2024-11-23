@@ -31,7 +31,7 @@ router.post("/tour", createTourUpload, asyncHandler(TourController.createTour));
 router.put("/tour", asyncHandler(TourController.updateTour)); // example: /tour?tourId=123
 router.delete("/tour", asyncHandler(TourController.deleteTour)); // example: /tour?tourId=123
 
-router.get("/bookings", asyncHandler(authenticationV2), asyncHandler(BookingController.getAllBooking));
+// router.get("/bookings", asyncHandler(authenticationV2), asyncHandler(BookingController.getAllBooking));
 
 module.exports = router;
 // Compare this snippet from src/routers/access/index.js:
