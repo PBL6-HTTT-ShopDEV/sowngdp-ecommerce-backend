@@ -38,8 +38,9 @@ class CategoryController {
   }
 
   static async updateCategory(req, res, next) {
+    const { categoryId } = req.query;
     const category = await categoryService.updateCategory(
-      req.params.id,
+      categoryId,
       req.body
     );
     return new Success({
@@ -49,7 +50,8 @@ class CategoryController {
   }
 
   static async deleteCategory(req, res, next) {
-    const category = await categoryService.deleteCategory(req.params.id);
+    const { categoryId } = req.query;
+    const category = await categoryService.deleteCategory(categoryId);
     return new Success({
       message: "Delete category success!",
       metadata: category,

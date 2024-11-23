@@ -20,6 +20,10 @@ const bookingSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    quantity: {
+        type: Number,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -29,3 +33,5 @@ const bookingSchema = new mongoose.Schema({
         default: true
     }
 });
+
+module.exports = mongoose.model(DOCUMENT_NAME, bookingSchema, COLLECTION_NAME);

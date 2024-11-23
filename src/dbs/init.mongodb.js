@@ -7,7 +7,7 @@ let pass_word = encodeURIComponent(password);
 console.log(user_name)
 console.log(pass_word)
 console.log(dbName)
-const connectString = `${protocol}://${user_name}:${pass_word}@${dbName}.5ixeh.mongodb.net/tour-booking?retryWrites=true&w=majority&appName=Tour-booking`;
+const connectString = `${protocol}://${user_name}:${pass_word}@${dbName}.5ixeh.mongodb.net/tour-booking?retryWrites=true&w=majority&ssl=true&appName=Tour-booking`;
 
 class Database {
     constructor() {

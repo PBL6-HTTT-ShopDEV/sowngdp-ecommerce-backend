@@ -2,9 +2,26 @@ const compression = require("compression");
 const express = require("express");
 const { default: helmet } = require("helmet");
 const app = express();
+const cors = require("cors");
 const morgan = require("morgan");
 require("dotenv").config();
-var bodyParser = require("body-parser");
+// var bodyParser = require("body-parser");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Tour API",
+      version: "1.0.0",
+      description: "API for managing tours",
+    },
+  },
+  apis: ["./src/routers/*.js"],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 //init middleWares
 app.use(morgan("dev"));
@@ -12,6 +29,9 @@ app.use(helmet());
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+//allow cors
+// app.use(cors({ origin: "http://localhost:5173" }));
 
 //init DB
 require("./dbs/init.mongodb");

@@ -4,7 +4,7 @@ const tourRepo = require("./repositories/tour.repo");
 
 const { NotFoundError } = require("../core/error.response");
 
-const ImageService = require("../helpers/upload.image");
+const FirebaseStorage = require("../helpers/firebase.storage");
 
 class TourService {
   static async getAllTour() {
@@ -19,33 +19,27 @@ class TourService {
     return tour;
   }
 
-  static async createTour(
-    tourData,
-    imageCoverFile,
-    thumbnailFile,
-    imageFiles,
-    userId
-  ) {
-    // Upload image cover
-    if (imageCoverFile) {
-      const imageCoverUrl = await ImageService.uploadImage(imageCoverFile);
-      tourData.image_cover = imageCoverUrl;
-    } else {
-      throw new Error("Image cover is required");
-    }
+  static async getTours(filter) {
+    const { page, limit, categoryId, price } = filter; // Đặt giá trị mặc định cho page và limit
+    console.log(page, limit, categoryId, price);
+    return await tourRepo.getTours(page, limit, categoryId, price);
+  }
 
+  static async createTour(tourData, thumbnailFile, imageFiles, userId) {
     // Upload thumbnail
     if (thumbnailFile) {
-      const thumbnailUrl = await ImageService.uploadImage(thumbnailFile);
-      tourData.thumbnail = thumbnailUrl;
+      const firebaseStorage = FirebaseStorage.getInstance();
+      const thumbnailUrl = await firebaseStorage.uploadImage(thumbnailFile);
+      tourData.thumbnail_url = thumbnailUrl;
     } else {
       throw new Error("Thumbnail is required");
     }
 
     // Upload images array
     if (imageFiles.length > 0) {
-      const imageUrls = await ImageService.uploadImages(imageFiles);
-      tourData.images = imageUrls;
+      const firebaseStorage = FirebaseStorage.getInstance();
+      const imageUrls = await firebaseStorage.uploadImage(imageFiles);
+      tourData.image_url = imageUrls;
     } else {
       tourData.images = []; // Or handle as per your requirements
     }

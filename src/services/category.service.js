@@ -33,15 +33,15 @@ class CategoryService {
     return categories;
   }
 
-  static async updateCategory(id, data) {
-    const category = await categoryModel.findByIdAndUpdate(id, data, {
+  static async updateCategory(categoryId, data) {
+    const category = await categoryModel.findByIdAndUpdate(categoryId, data, {
       new: true,
     });
     return category;
   }
 
-  static async deleteCategory(id) {
-    const category = await categoryModel.findByIdAndDelete(id);
+  static async deleteCategory(categoryId) {
+    const category = await categoryModel.findByIdAndDelete(categoryId);
     return category;
   }
 }
