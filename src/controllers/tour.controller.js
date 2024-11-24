@@ -90,7 +90,19 @@ class TourController {
   }
 
   static async updateTour(req, res, next) {
-    const tour = await TourService.updateTour(req.params.id, req.body);
+    const tourData = req.body;
+    const files = req.files;
+    const userId = req.headers[HEADER.CLIENT_ID];
+
+    const thumbnailFile = files["thumbnail"] ? files["thumbnail"][0] : null;
+    const imageFiles = files["images"] || [];
+    const tour = await TourService.updateTour(
+      req.query.id,
+      tourData,
+      thumbnailFile,
+      imageFiles,
+      userId
+    );
     return new Success({
       message: "Update tour success!",
       metadata: tour,
