@@ -110,7 +110,7 @@ class TourController {
   }
 
   static async deleteTour(req, res, next) {
-    const tour = await TourService.deleteTour(req.params.id);
+    const tour = await TourService.deleteTour(req.query.id);
     return new Success({
       message: "Delete tour success!",
       metadata: tour,
