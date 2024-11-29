@@ -41,9 +41,7 @@ class BookingService {
     );
 
     if (!isAvailable) {
-      throw new BadRequestError(
-        "Tour is not available for selected date/people"
-      );
+      throw new BadRequestError("Tour is not available for selected date/people");
     }
 
     const booking = await BookingRepo.createBooking({
@@ -84,26 +82,37 @@ class BookingService {
       throw new NotFoundError("Tour not found");
     }
 
-    // Get existing bookings for the date
+    // Chuyển đổi numberOfPeople thành số (nếu cần)
+    const numPeople = parseInt(numberOfPeople, 10);
+
+    // Kiểm tra ngày đặt có sớm hơn ngày khởi hành
+    const tourStartDate = new Date(tour.start_date);
+    const requestedDateObj = new Date(date);
+
+    if (requestedDateObj >= tourStartDate) {
+      console.log("Requested date must be earlier than the tour start date.");
+      return false; // Ngày đặt không hợp lệ
+    }
+
+    // Lấy các booking đã tồn tại cho ngày đó
     const existingBookings = await BookingRepo.getBookings({
       tour: tourId,
       date: date,
-      status: { $ne: "success" },
+      status: "success", // Chỉ tính các booking đã thành công
     });
 
-    // nếu không có booking nào thì check số lượng người có lớn hơn tour mas people hay không nếu không thì return true
-    if (!existingBookings) {
-      console.log("tour.max_people", tour.max_group_size);
-      return numberOfPeople <= tour.max_group_size;
-    } else {
-      // Calculate total booked spots
-      const bookedSpots = existingBookings.reduce((total, booking) => {
-        return total + booking.number_of_people;
-      }, 0);
-
-      // Check if requested spots are available
-      return bookedSpots + numberOfPeople <= tour.max_people;
+    // Nếu không có booking nào, kiểm tra số lượng người
+    if (!existingBookings || existingBookings.length === 0) {
+      return numPeople <= tour.max_group_size;
     }
+
+    // Tính tổng số người đã đặt
+    const bookedSpots = existingBookings.reduce((total, booking) => {
+      return total + booking.number_of_people;
+    }, 0);
+
+    // Kiểm tra nếu còn đủ chỗ
+    return bookedSpots + numPeople <= tour.max_group_size;
   }
 
   static async processPayment(bookingId, userId, paymentData) {
@@ -113,9 +122,7 @@ class BookingService {
     }
 
     if (booking.user.toString() !== userId) {
-      throw new BadRequestError(
-        "Not authorized to process payment for this booking"
-      );
+      throw new BadRequestError("Not authorized to process payment for this booking");
     }
 
     // Here you would integrate with a payment provider
