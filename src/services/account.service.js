@@ -30,8 +30,8 @@ class AccountService {
         return accounts;
     }
 
-    static async getAccountByQuery(query) {
-        return await accountModel.find(query);
+    static async getAccountByQuery(role) {
+        return await accountModel.find({ roles: role });
     }
 }
 

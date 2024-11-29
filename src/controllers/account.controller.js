@@ -23,14 +23,15 @@ class AccountController {
             const { name, phone_number, address, date_of_birth } = req.body;
             const files = req.files;
             let avatarUrl = null;
-    
+
             if (files["avatar"]) {
                 const avatar = files["avatar"][0];
-                // Giả sử bạn có một hàm uploadImage để tải lên ảnh và nhận lại URL
-                // avatar.originalname = avatar.name;
-                avatarUrl = await FirebaseStorage.uploadImage(avatar);
+                // Sử dụng instance của FirebaseStorage
+                const account = await AccountService.getAccountById(userId);
+                const firebaseStorage = FirebaseStorage.getInstance();
+                avatarUrl = await firebaseStorage.updateImage(account.avatar, avatar);
             }
-    
+
             const accountUpdateData = { avatar: avatarUrl, name, phone_number, address, date_of_birth };
             const account = await AccountService.updateAccount(userId, accountUpdateData);
             return new Success({
@@ -69,8 +70,8 @@ class AccountController {
     }
 
     static getAccountByQuery = async (req, res, next) => {
-        const { query } = req.query;
-        const account = await AccountService.getAccountByQuery(query);
+        const { role } = req.query;
+        const account = await AccountService.getAccountByQuery(role);
         return new Success({
             message: "Get account success!",
             metadata: account

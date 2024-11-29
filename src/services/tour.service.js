@@ -19,37 +19,27 @@ class TourService {
     return tour;
   }
 
-  // static async getTourByPage(page, limit) {
-  //   return await tourRepo.getTourByPage(page, limit);
-  // }
-
   static async getTours(filter) {
     const { page, limit, categoryId, price } = filter; // Đặt giá trị mặc định cho page và limit
     console.log(page, limit, categoryId, price);
     return await tourRepo.getTours(page, limit, categoryId, price);
   }
 
-  static async createTour(tourData, imageCoverFile, thumbnailFile, imageFiles, userId) {
-    // Upload image cover
-    if (imageCoverFile) {
-      const imageCoverUrl = await FirebaseStorage.uploadImage(imageCoverFile);
-      tourData.image_cover = imageCoverUrl;
-    } else {
-      throw new Error("Image cover is required");
-    }
-
+  static async createTour(tourData, thumbnailFile, imageFiles, userId) {
     // Upload thumbnail
     if (thumbnailFile) {
-      const thumbnailUrl = await FirebaseStorage.uploadImage(thumbnailFile);
-      tourData.thumbnail = thumbnailUrl;
+      const firebaseStorage = FirebaseStorage.getInstance();
+      const thumbnailUrl = await firebaseStorage.uploadImage(thumbnailFile);
+      tourData.thumbnail_url = thumbnailUrl;
     } else {
       throw new Error("Thumbnail is required");
     }
 
     // Upload images array
     if (imageFiles.length > 0) {
-      const imageUrls = await FirebaseStorage.uploadImage(imageFiles);
-      tourData.images = imageUrls;
+      const firebaseStorage = FirebaseStorage.getInstance();
+      const imageUrls = await firebaseStorage.uploadImage(imageFiles);
+      tourData.image_url = imageUrls;
     } else {
       tourData.images = []; // Or handle as per your requirements
     }
@@ -66,7 +56,19 @@ class TourService {
     return tour;
   }
 
-  static async updateTour(id, data) {
+  static async updateTour(id, data, thumbnailFile, imageFiles) {
+    // Upload thumbnail
+    const oldTour = await tourRepo.getTourById(id);
+    if (thumbnailFile) {
+      const firebaseStorage = FirebaseStorage.getInstance();
+      const thumbnailUrl = await firebaseStorage.updateImage(oldTour.thumbnail_url, thumbnailFile);
+      data.thumbnail_url = thumbnailUrl;
+    }
+    if (imageFiles.length > 0) {
+      const firebaseStorage = FirebaseStorage.getInstance();
+      const imageUrls = await firebaseStorage.updateImage(oldTour.image_url, imageFiles);
+      data.image_url = imageUrls;
+    }
     const tour = await tourRepo.updateTour(id, data);
     if (!tour) {
       throw new NotFoundError("Tour not found!");

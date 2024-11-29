@@ -5,7 +5,6 @@ const { initializeApp } = require("firebase/app");
 const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } = require("firebase/storage");
 const { v4: uuidv4 } = require("uuid");
 
-
 console.log(firebaseConfig);
 const firebaseApp = initializeApp(firebaseConfig);
 const storage = getStorage(firebaseApp);
@@ -26,42 +25,40 @@ class FirebaseStorage {
     async uploadImage(file) {
         try {
             const uniqueFileName = `${uuidv4()}-${file.originalname}`;
-
-            // Specify the folder where you want to save the files
             const folderPath = "Hodophile";
-            const storageRef = ref(storage, `${folderPath}/${uniqueFileName}`);
-            // const storageRef = ref(this.storage, `Images/${Date.now()}_${file.originalname}`);
-            console.log('Uploading file:', file.originalname);
-            // const uploadTask = await uploadBytes(storageRef, file.buffer);
-            // const downloadURL = await getDownloadURL(uploadTask.ref);
-
-            // Upload each file to Firebase Storage
+            const storageRef = ref(this.storage, `${folderPath}/${uniqueFileName}`);
             const metadata = {
                 contentType: file.mimetype,
             };
             await uploadBytes(storageRef, file.buffer, metadata);
-
-            // Get the download URL for each uploaded file
             const downloadURL = await getDownloadURL(storageRef);
             console.log('File uploaded successfully:', downloadURL);
             return downloadURL;
         } catch (error) {
             console.error('Error uploading file:', error);
-            throw error;
+            return null;
         }
     }
 
     async deleteImage(url) {
-        const storageRef = ref(storage, url);
-        deleteObject(storageRef);
+        const storageRef = ref(this.storage, url);
+        console.log('Deleting file:', url);
+        await deleteObject(storageRef);
+        console.log('File deleted successfully');
     }
 
     async updateImage(url, file) {
-        this.deleteImage(url);
-        return this.uploadImage(file);
+        try {
+            if (url) {
+                await this.deleteImage(url);
+            }
+            const newUrl = await this.uploadImage(file);
+            return newUrl;
+        } catch (error) {
+            console.error('Error updating image:', error);
+            return null;
+        }
     }
 }
 
-const firebaseStorage = FirebaseStorage.getInstance();
-
-module.exports = firebaseStorage;
+module.exports = FirebaseStorage;
