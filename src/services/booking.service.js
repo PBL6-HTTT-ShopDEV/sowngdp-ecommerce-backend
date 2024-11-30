@@ -61,7 +61,9 @@ class BookingService {
     if (!booking) {
       throw new NotFoundError("Booking not found");
     }
-
+    const { number_of_people } = data;
+    const totalPrice = booking.tour.price * number_of_people;
+    data.total_price = totalPrice;
     return await BookingRepo.updateBooking(id, data);
   }
 
@@ -71,7 +73,8 @@ class BookingService {
       throw new NotFoundError("Booking not found");
     }
 
-    if (booking.user.toString() !== userId) {
+    if (booking.user._id.toString() !== userId) {
+      console.log("booking.user", booking.user._id);
       throw new BadRequestError("Not authorized to cancel this booking");
     }
 
@@ -84,26 +87,44 @@ class BookingService {
       throw new NotFoundError("Tour not found");
     }
 
+    // Chuyển đổi numberOfPeople thành số (nếu cần)
+    const numPeople = parseInt(numberOfPeople, 10);
+
+    // Kiểm tra ngày đặt có sớm hơn ngày khởi hành
+    const tourStartDate = new Date(tour.start_date);
+    const requestedDateObj = new Date(date);
+
+    if (requestedDateObj >= tourStartDate) {
+      console.log("Requested date must be earlier than the tour start date.");
+      return false; // Ngày đặt không hợp lệ
+    }
+
     // Get existing bookings for the date
     const existingBookings = await BookingRepo.getBookings({
       tour: tourId,
-      date: date,
-      status: { $ne: "success" },
+      status: "success", // Chỉ tính các booking đã thành công
     });
 
-    // nếu không có booking nào thì check số lượng người có lớn hơn tour mas people hay không nếu không thì return true
-    if (!existingBookings) {
-      console.log("tour.max_people", tour.max_group_size);
-      return numberOfPeople <= tour.max_group_size;
-    } else {
-      // Calculate total booked spots
-      const bookedSpots = existingBookings.reduce((total, booking) => {
-        return total + booking.number_of_people;
-      }, 0);
-
-      // Check if requested spots are available
-      return bookedSpots + numberOfPeople <= tour.max_people;
+    console.log("Existing bookings", existingBookings);
+    // Nếu không có booking nào, kiểm tra số lượng người
+    if (!existingBookings || existingBookings.length === 0) {
+      return numPeople <= tour.max_group_size;
     }
+
+    // Tính tổng số người đã đặt
+    const bookedSpots = existingBookings.reduce((total, booking) => {
+      console.log(total, booking.number_of_people);
+      return total;
+    }, 0);
+
+    console.log(
+      "Booked spots",
+      bookedSpots,
+      numberOfPeople,
+      tour.max_group_size
+    );
+    // Kiểm tra nếu còn đủ chỗ
+    return bookedSpots + numberOfPeople <= tour.max_group_size;
   }
 
   static async processPayment(bookingId, userId, paymentData) {
@@ -130,52 +151,3 @@ class BookingService {
 }
 
 module.exports = BookingService;
-
-/*
-"use strict";
-
-const BookingRepo = require("../services/repositories/booking.repo");
-
-class BookingService {
-  static async getAllBooking() {
-    const bookings = await BookingRepo.getAllBooking();
-    return bookings;
-  }
-
-  static async getBookingsByUserId(userId) {
-    const bookings = await BookingRepo.getBookingByUserId(userId);
-    return bookings;
-  }
-
-  static async getBookingById(query) {
-    const { id, tourid, userid } = query;
-
-    const booking = await BookingRepo.getBookingById(id, tourid, userid);
-    return booking;
-  }
-
-  static async getBookingByTourId(tourId) {
-    console.log(tourId);
-    const booking = await BookingRepo.getBookingByTourId(tourId);
-    return booking;
-  }
-
-  static async createBooking(data, userId) {
-    const booking = await BookingRepo.createBooking(data, userId);
-    return booking;
-  }
-
-  static async updateBooking(id, data) {
-    const booking = await BookingRepo.updateBooking(id, data);
-    return booking;
-  }
-
-  static async deleteBooking(id) {
-    const booking = await BookingRepo.deleteBooking(id);
-    return booking;
-  }
-}
-
-module.exports = BookingService;
-
-*/

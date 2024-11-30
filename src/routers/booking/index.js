@@ -22,8 +22,8 @@ router.get(
 router.get("/bookings", asyncHandler(BookingController.getAllBooking));
 router.get("/bookings/:id", asyncHandler(BookingController.getBookingById));
 router.post("/bookings", asyncHandler(BookingController.createBooking)); // example: /bookings?tourId=123
-router.put("/bookings/:id", asyncHandler(BookingController.updateBooking));
-router.delete("/bookings/:id", asyncHandler(BookingController.cancelBooking));
+router.put("/bookings", asyncHandler(BookingController.updateBooking));
+router.delete("/bookings", asyncHandler(BookingController.cancelBooking));
 
 // User specific bookings
 router.get(
