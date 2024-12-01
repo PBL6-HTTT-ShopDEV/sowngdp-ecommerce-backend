@@ -6,15 +6,7 @@ const DOCUMENT_NAME = "Tour";
 // Define the Tour Schema
 const tourSchema = new Schema(
   {
-    // name: {
-    //   type: String,
-    //   required: true,
-    // },
-    destination: {
-      type: String,
-      required: true,
-    },
-    destination: {
+    name: {
       type: String,
       required: true,
     },
