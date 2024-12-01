@@ -8,7 +8,7 @@ class BookingRepo {
   static async getAllBooking() {
     return await bookingModel
       .find()
-      .populate("tour", "name price thumbnail_url")
+      .populate("tour", "name price thumbnail_url destination")
       .populate("user", "name email")
       .lean();
   }
@@ -21,7 +21,7 @@ class BookingRepo {
 
     return await bookingModel
       .findOne(query)
-      .populate("tour", "name price thumbnail_url")
+      .populate("tour", "name price thumbnail_url destination")
       .populate("user", "name email")
       .lean();
   }
@@ -29,7 +29,7 @@ class BookingRepo {
   static async getBookings(query) {
     return await bookingModel
       .find(query)
-      .populate("tour", "name price thumbnail_url")
+      .populate("tour", "name price thumbnail_url destination")
       .populate("user", "name email")
       .lean();
   }
@@ -37,18 +37,16 @@ class BookingRepo {
   static async createBooking(data) {
     const booking = await bookingModel.create(data);
     return await booking.populate([
-      { path: "tour", select: "name price thumbnail_url" },
+      { path: "tour", select: "name price thumbnail_url destination" },
       { path: "user", select: "name email" },
     ]);
   }
 
   static async updateBooking(id, data) {
-    const booking = await bookingModel
-      .findByIdAndUpdate(id, data, { new: true })
-      .populate([
-        { path: "tour", select: "name price thumbnail_url" },
-        { path: "user", select: "name email" },
-      ]);
+    const booking = await bookingModel.findByIdAndUpdate(id, data, { new: true }).populate([
+      { path: "tour", select: "name price thumbnail_url destination" },
+      { path: "user", select: "name email" },
+    ]);
     return booking;
   }
 
@@ -60,14 +58,14 @@ class BookingRepo {
   static async getBookingByUserId(userId) {
     return await bookingModel
       .find({ user: userId })
-      .populate("tour", "name price thumbnail_url")
+      .populate("tour", "name price thumbnail_url destination")
       .lean();
   }
 
   static async getBookingByTourId(tourId) {
     return await bookingModel
       .find({ tour: tourId })
-      .populate("user", "name price thumbnail_url")
+      .populate("user", "name price thumbnail_url destination")
       .lean();
   }
 
