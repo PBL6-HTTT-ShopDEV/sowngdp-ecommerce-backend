@@ -55,7 +55,7 @@ class BookingController {
   static async updateBooking(req, res, next) {
     const data = {
       status: req.body.status,
-      number_of_people: req.body.numberOfPeople,
+      number_of_people: req.body.number_of_people,
     };
     const booking = await BookingService.updateBooking(req.query.id, data);
     return new Success({
@@ -77,11 +77,7 @@ class BookingController {
   // Check availability
   static async checkAvailability(req, res, next) {
     const { tourId, date, numberOfPeople } = req.query;
-    const available = await BookingService.checkAvailability(
-      tourId,
-      date,
-      numberOfPeople
-    );
+    const available = await BookingService.checkAvailability(tourId, date, numberOfPeople);
     return new Success({
       message: "Check availability success!",
       metadata: { available },
@@ -92,11 +88,7 @@ class BookingController {
   static async processPayment(req, res, next) {
     const { bookingId } = req.params;
     const userId = req.headers["x-client-id"];
-    const payment = await BookingService.processPayment(
-      bookingId,
-      userId,
-      req.body
-    );
+    const payment = await BookingService.processPayment(bookingId, userId, req.body);
     return new Success({
       message: "Process payment success!",
       metadata: payment,

@@ -41,9 +41,7 @@ class BookingService {
     );
 
     if (!isAvailable) {
-      throw new BadRequestError(
-        "Tour is not available for selected date/people"
-      );
+      throw new BadRequestError("Tour is not available for selected date/people");
     }
 
     const booking = await BookingRepo.createBooking({
@@ -117,12 +115,7 @@ class BookingService {
       return total;
     }, 0);
 
-    console.log(
-      "Booked spots",
-      bookedSpots,
-      numberOfPeople,
-      tour.max_group_size
-    );
+    console.log("Booked spots", bookedSpots, numberOfPeople, tour.max_group_size);
     // Kiểm tra nếu còn đủ chỗ
     return bookedSpots + numberOfPeople <= tour.max_group_size;
   }
@@ -134,9 +127,7 @@ class BookingService {
     }
 
     if (booking.user.toString() !== userId) {
-      throw new BadRequestError(
-        "Not authorized to process payment for this booking"
-      );
+      throw new BadRequestError("Not authorized to process payment for this booking");
     }
 
     // Here you would integrate with a payment provider
