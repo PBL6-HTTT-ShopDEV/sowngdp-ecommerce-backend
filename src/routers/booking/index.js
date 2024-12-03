@@ -5,23 +5,40 @@ const express = require("express");
 const router = express.Router();
 const { asyncHandler, authenticationV2 } = require("../../auth/authUtils");
 
-router.get("/booking", asyncHandler(BookingController.getAllBooking)); // example url: http://localhost:3055/v1/api/booking
-router.get("/bookings", asyncHandler(BookingController.getBookingById)); // example url: http://localhost:3055/v1/api/bookings?tourid=123&userid=123
+// Public routes
+router.get(
+  "/bookings/tour/:tourId",
+  asyncHandler(BookingController.getBookingByTourId)
+);
+router.get(
+  "/bookings/availability/:tourId",
+  asyncHandler(BookingController.checkAvailability)
+);
 
+// Protected routes - require authentication
+// router.use(asyncHandler(authenticationV2));
+
+// Booking management
+router.get("/bookings", asyncHandler(BookingController.getAllBooking));
+router.get("/bookings/:id", asyncHandler(BookingController.getBookingById));
+router.post("/bookings", asyncHandler(BookingController.createBooking)); // example: /bookings?tourId=123
+router.put("/bookings", asyncHandler(BookingController.updateBooking));
+router.delete("/bookings", asyncHandler(BookingController.cancelBooking));
+
+// User specific bookings
+router.get(
+  "/bookings/user/me",
+  asyncHandler(BookingController.getBookingsByUser)
+);
+
+// Booking payment and confirmation
 router.post(
-  "/bookings",
-  //   authenticationV2,
-  asyncHandler(BookingController.createBooking)
+  "/bookings/:id/payment",
+  asyncHandler(BookingController.processPayment)
 );
-router.put(
-  "/bookings/:id",
-  //   authenticationV2,
-  asyncHandler(BookingController.updateBooking)
-);
-router.delete(
-  "/bookings/:id",
-  //   authenticationV2,
-  asyncHandler(BookingController.deleteBooking)
-);
+// router.post(
+//   "/bookings/:id/confirm",
+//   asyncHandler(BookingController.confirmBooking)
+// );
 
 module.exports = router;

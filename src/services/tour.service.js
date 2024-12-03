@@ -56,7 +56,19 @@ class TourService {
     return tour;
   }
 
-  static async updateTour(id, data) {
+  static async updateTour(id, data, thumbnailFile, imageFiles) {
+    // Upload thumbnail
+    const oldTour = await tourRepo.getTourById(id);
+    if (thumbnailFile) {
+      const firebaseStorage = FirebaseStorage.getInstance();
+      const thumbnailUrl = await firebaseStorage.updateImage(oldTour.thumbnail_url, thumbnailFile);
+      data.thumbnail_url = thumbnailUrl;
+    }
+    if (imageFiles.length > 0) {
+      const firebaseStorage = FirebaseStorage.getInstance();
+      const imageUrls = await firebaseStorage.updateImage(oldTour.image_url, imageFiles);
+      data.image_url = imageUrls;
+    }
     const tour = await tourRepo.updateTour(id, data);
     if (!tour) {
       throw new NotFoundError("Tour not found!");
@@ -88,16 +100,8 @@ class TourService {
     return await tourRepo.getTourByCategoryAndLocation(categoryId, locationId);
   }
 
-  static async getTourByCategoryAndLocationAndPrice(
-    categoryId,
-    locationId,
-    price
-  ) {
-    return await tourRepo.getTourByCategoryAndLocationAndPrice(
-      categoryId,
-      locationId,
-      price
-    );
+  static async getTourByCategoryAndLocationAndPrice(categoryId, locationId, price) {
+    return await tourRepo.getTourByCategoryAndLocationAndPrice(categoryId, locationId, price);
   }
 
   static async getTourByCategoryAndPrice(categoryId, price) {

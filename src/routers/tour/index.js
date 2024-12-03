@@ -28,7 +28,7 @@ router.get("/tour", asyncHandler(TourController.getTours)); // example: /tour?pa
 // router.use();
 router.post("/tour", createTourUpload, asyncHandler(TourController.createTour));
 
-router.put("/tour", asyncHandler(TourController.updateTour)); // example: /tour?tourId=123
+router.put("/tour", createTourUpload, asyncHandler(TourController.updateTour)); // example: /tour?id=123
 router.delete("/tour", asyncHandler(TourController.deleteTour)); // example: /tour?tourId=123
 
 // router.get("/bookings", asyncHandler(authenticationV2), asyncHandler(BookingController.getAllBooking));

@@ -26,17 +26,22 @@ class TourController {
   }
 
   static async getTours(req, res, next) {
-      const { page, limit, categoryId, price } = req.query;
-      console.log(page,limit, categoryId, price);
-      const tours = await TourService.getTours({ page, limit, categoryId, price });
-      return new Success({
-        message: "Get tours with pagination success!",
-        metadata: tours,
-      }).send(res);
+    const { page, limit, categoryId, price } = req.query;
+    console.log(page, limit, categoryId, price);
+    const tours = await TourService.getTours({
+      page,
+      limit,
+      categoryId,
+      price,
+    });
+    return new Success({
+      message: "Get tours with pagination success!",
+      metadata: tours,
+    }).send(res);
   }
 
   static async getTourById(req, res, next) {
-    const tour = await TourService.getTourById(req.params.id);
+    const tour = await TourService.getTourById(req.query.id);
     return new Success({
       message: "Get tour by id success!",
       metadata: tour,
@@ -85,7 +90,19 @@ class TourController {
   }
 
   static async updateTour(req, res, next) {
-    const tour = await TourService.updateTour(req.params.id, req.body);
+    const tourData = req.body;
+    const files = req.files;
+    const userId = req.headers[HEADER.CLIENT_ID];
+
+    const thumbnailFile = files["thumbnail"] ? files["thumbnail"][0] : null;
+    const imageFiles = files["images"] || [];
+    const tour = await TourService.updateTour(
+      req.query.id,
+      tourData,
+      thumbnailFile,
+      imageFiles,
+      userId
+    );
     return new Success({
       message: "Update tour success!",
       metadata: tour,
@@ -93,7 +110,7 @@ class TourController {
   }
 
   static async deleteTour(req, res, next) {
-    const tour = await TourService.deleteTour(req.params.id);
+    const tour = await TourService.deleteTour(req.query.id);
     return new Success({
       message: "Delete tour success!",
       metadata: tour,
