@@ -1,12 +1,17 @@
 "use strict";
 
 const tourRepo = require("./repositories/tour.repo");
+const accountService = require("./account.service");
 
 const { NotFoundError } = require("../core/error.response");
 
 const FirebaseStorage = require("../helpers/firebase.storage");
 
 class TourService {
+  static async addFavoriteTour(userId, tourId) {
+    return await accountService.addFavoriteTour(userId, tourId);
+  }
+
   static async getAllTour() {
     return await tourRepo.getAllTour();
   }
@@ -61,12 +66,18 @@ class TourService {
     const oldTour = await tourRepo.getTourById(id);
     if (thumbnailFile) {
       const firebaseStorage = FirebaseStorage.getInstance();
-      const thumbnailUrl = await firebaseStorage.updateImage(oldTour.thumbnail_url, thumbnailFile);
+      const thumbnailUrl = await firebaseStorage.updateImage(
+        oldTour.thumbnail_url,
+        thumbnailFile
+      );
       data.thumbnail_url = thumbnailUrl;
     }
     if (imageFiles.length > 0) {
       const firebaseStorage = FirebaseStorage.getInstance();
-      const imageUrls = await firebaseStorage.updateImage(oldTour.image_url, imageFiles);
+      const imageUrls = await firebaseStorage.updateImage(
+        oldTour.image_url,
+        imageFiles
+      );
       data.image_url = imageUrls;
     }
     const tour = await tourRepo.updateTour(id, data);
@@ -100,8 +111,16 @@ class TourService {
     return await tourRepo.getTourByCategoryAndLocation(categoryId, locationId);
   }
 
-  static async getTourByCategoryAndLocationAndPrice(categoryId, locationId, price) {
-    return await tourRepo.getTourByCategoryAndLocationAndPrice(categoryId, locationId, price);
+  static async getTourByCategoryAndLocationAndPrice(
+    categoryId,
+    locationId,
+    price
+  ) {
+    return await tourRepo.getTourByCategoryAndLocationAndPrice(
+      categoryId,
+      locationId,
+      price
+    );
   }
 
   static async getTourByCategoryAndPrice(categoryId, price) {
