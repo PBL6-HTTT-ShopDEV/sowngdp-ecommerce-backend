@@ -2,6 +2,9 @@
 const accountModel = require("../models/account.model");
 
 class AccountService {
+  static async getFavoriteTour(userId) {
+    return await accountModel.findById(userId).populate("favoriteTours").lean();
+  }
   static async addFavoriteTour(userId, tourId) {
     const account = await accountModel.findById(userId);
     account.favoriteTours.push(tourId);

@@ -7,6 +7,15 @@ const { Success } = require("../core/success.response");
 const FirebaseStorage = require("../helpers/firebase.storage");
 
 class AccountController {
+  static getFavouriteTourByUserId = async (req, res, next) => {
+    const { userId } = req.query;
+    const account = await AccountService.getFavoriteTour(userId);
+    return new Success({
+      message: "Get favorite tour success!",
+      metadata: account,
+    }).send(res);
+  };
+
   static createAccount = async (req, res, next) => {
     const { user_name, email, password } = req.body;
     const account = await AccountService.createAccount({

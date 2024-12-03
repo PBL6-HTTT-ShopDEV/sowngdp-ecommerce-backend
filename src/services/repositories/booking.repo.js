@@ -4,6 +4,13 @@
 const bookingModel = require("../../models/booking.model");
 
 class BookingRepo {
+  static async countDocuments(query) {
+    return await bookingModel.countDocuments(query);
+  }
+  // Aggregate operations
+  static async aggregate(pipeline) {
+    return await bookingModel.aggregate(pipeline);
+  }
   // Basic CRUD operations
   static async getAllBooking() {
     return await bookingModel
@@ -43,10 +50,12 @@ class BookingRepo {
   }
 
   static async updateBooking(id, data) {
-    const booking = await bookingModel.findByIdAndUpdate(id, data, { new: true }).populate([
-      { path: "tour", select: "name price thumbnail_url destination" },
-      { path: "user", select: "name email" },
-    ]);
+    const booking = await bookingModel
+      .findByIdAndUpdate(id, data, { new: true })
+      .populate([
+        { path: "tour", select: "name price thumbnail_url destination" },
+        { path: "user", select: "name email" },
+      ]);
     return booking;
   }
 
