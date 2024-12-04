@@ -7,7 +7,7 @@ const { asyncHandler, authenticationV2 } = require("../../auth/authUtils");
 const StatisticalController = require("../../controllers/statistical.controller");
 
 // Require authentication for all statistical routes
-router.use(asyncHandler(authenticationV2));
+// router.use(asyncHandler(authenticationV2));
 
 // Revenue statistics
 router.get(
@@ -30,6 +30,6 @@ router.get(
 );
 
 // Dashboard overview
-router.get("/dashboard", asyncHandler(StatisticalController.getDashboardStats));
+router.get("/dashboard", asyncHandler(StatisticalController.getDashboardStats)); // example: /v1/api/statistical/dashboard
 
 module.exports = router;

@@ -11,6 +11,16 @@ const HEADER = {
 };
 
 class TourController {
+  static async addFavoriteTour(req, res, next) {
+    const { tourId } = req.query;
+    const userId = req.headers[HEADER.CLIENT_ID];
+    const tour = await TourService.addFavoriteTour(userId, tourId);
+    return new Success({
+      message: "Add favorite tour success!",
+      metadata: tour,
+    }).send(res);
+  }
+
   static async getAllTour(req, res, next) {
     const tours = await TourService.getAllTour();
     if (!tours) {
