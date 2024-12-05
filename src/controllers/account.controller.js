@@ -38,15 +38,12 @@ class AccountController {
       const accountData = await AccountService.getAccountById(userId);
       avatarUrl = accountData.avatar;
 
-      if (files["avatar"]) {
+      if (files && files["avatar"]) {
         const avatar = files["avatar"][0];
         // Sử dụng instance của FirebaseStorage
 
         const firebaseStorage = FirebaseStorage.getInstance();
-        avatarUrl = await firebaseStorage.updateImage(
-          accountData.avatar,
-          avatar
-        );
+        avatarUrl = await firebaseStorage.updateImage(accountData.avatar, avatar);
       }
 
       const accountUpdateData = {
@@ -56,10 +53,7 @@ class AccountController {
         address,
         date_of_birth,
       };
-      const account = await AccountService.updateAccount(
-        userId,
-        accountUpdateData
-      );
+      const account = await AccountService.updateAccount(userId, accountUpdateData);
       return new Success({
         message: "Update account success!",
         metadata: account,
