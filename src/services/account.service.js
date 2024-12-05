@@ -3,11 +3,11 @@ const accountModel = require("../models/account.model");
 
 class AccountService {
   static async getFavoriteTour(userId) {
-    return await accountModel.findById(userId).populate("favoriteTours").lean();
+    return await accountModel.findById(userId).populate("favourite_lists").lean();
   }
   static async addFavoriteTour(userId, tourId) {
     const account = await accountModel.findById(userId);
-    account.favoriteTours.push(tourId);
+    account.favourite_lists.push(tourId);
     await account.save();
     return account;
   }
