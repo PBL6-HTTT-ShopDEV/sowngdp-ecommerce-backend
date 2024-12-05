@@ -20,8 +20,10 @@ class StatisticalController {
 
   // Thống kê doanh thu theo quý
   static async getRevenueByQuarter(req, res) {
-    const { year } = req.query;
-    const statistics = await StatisticalService.calculateRevenueByQuarter(year);
+    const { quarter } = req.query;
+    const statistics = await StatisticalService.calculateRevenueByQuarter(
+      quarter
+    );
     return new Success({
       message: "Get revenue by quarter success!",
       metadata: statistics,
@@ -30,13 +32,21 @@ class StatisticalController {
 
   // Thống kê doanh thu theo tháng
   static async getRevenueByMonth(req, res) {
-    const { year, month } = req.query;
-    const statistics = await StatisticalService.calculateRevenueByMonth(
-      year,
-      month
-    );
+    const { month } = req.query;
+    // console.log(year, month);
+    console.log("getRevenueByMonth");
+    const statistics = await StatisticalService.calculateRevenueByMonth(month);
     return new Success({
       message: "Get revenue by month success!",
+      metadata: statistics,
+    }).send(res);
+  }
+
+  static async getRevenueByDay(req, res) {
+    const { day } = req.query;
+    const statistics = await StatisticalService.calculateRevenueByDay(day);
+    return new Success({
+      message: "Get revenue by day success!",
       metadata: statistics,
     }).send(res);
   }

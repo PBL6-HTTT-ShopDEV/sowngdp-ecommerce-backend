@@ -1,81 +1,119 @@
-// src/services/statistical.service.js
-"use strict";
-
 const BookingRepo = require("./repositories/booking.repo");
-const TourRepo = require("./repositories/tour.repo");
-const { NotFoundError } = require("../core/error.response");
+const { BadRequestError } = require("../core/error.response");
+
+// src/services/statistical.service.js
+
+("use strict");
 
 class StatisticalService {
-  // Tính doanh thu theo tour
+  // Helper to validate and parse dates
+  static _getDateRange(year, month = null, day = null) {
+    // Validate year
+    const yearNum = parseInt(year);
+    if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2100) {
+      throw new BadRequestError("Invalid year");
+    }
+
+    // If month provided, validate it
+    if (month) {
+      const monthNum = parseInt(month);
+      if (isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+        throw new BadRequestError("Invalid month");
+      }
+
+      if (day) {
+        const dayNum = parseInt(day);
+        if (isNaN(dayNum) || dayNum < 1 || dayNum > 31) {
+          throw new BadRequestError("Invalid day");
+        }
+        return {
+          startDate: new Date(Date.UTC(yearNum, monthNum - 1, dayNum, 0, 0, 0)),
+          endDate: new Date(
+            Date.UTC(yearNum, monthNum - 1, dayNum, 23, 59, 59)
+          ),
+        };
+      }
+
+      // Get last day of month
+      const lastDay = new Date(yearNum, monthNum, 0).getDate();
+
+      return {
+        startDate: new Date(Date.UTC(yearNum, monthNum - 1, 1, 0, 0, 0)),
+        endDate: new Date(Date.UTC(yearNum, monthNum - 1, lastDay, 23, 59, 59)),
+      };
+    }
+
+    // Full year range
+    return {
+      startDate: new Date(Date.UTC(yearNum, 0, 1, 0, 0, 0)),
+      endDate: new Date(Date.UTC(yearNum, 11, 31, 23, 59, 59)),
+    };
+  }
+
+  // Calculate revenue by tour with date range
   static async calculateRevenueByTour(fromDate, toDate) {
+    const dateQuery = {};
+    if (fromDate && toDate) {
+      dateQuery.updatedAt = {
+        $gte: new Date(fromDate),
+        $lte: new Date(toDate),
+      };
+    }
+
     const pipeline = [
       {
         $match: {
           status: "success",
-          ...(fromDate && toDate
-            ? {
-                createdAt: {
-                  $gte: new Date(fromDate),
-                  $lte: new Date(toDate),
-                },
-              }
-            : {}),
+          ...dateQuery,
         },
       },
-      {
-        $group: {
-          _id: "$tour",
-          totalRevenue: { $sum: "$total_price" },
-          totalBookings: { $sum: 1 },
-          totalPeople: { $sum: "$number_of_people" },
-        },
-      },
-      {
-        $lookup: {
-          from: "Tours",
-          localField: "_id",
-          foreignField: "_id",
-          as: "tourDetails",
-        },
-      },
-      {
-        $unwind: "$tourDetails",
-      },
-      {
-        $project: {
-          tourName: "$tourDetails.name",
-          totalRevenue: 1,
-          totalBookings: 1,
-          totalPeople: 1,
-          averageRevenue: { $divide: ["$totalRevenue", "$totalBookings"] },
-        },
-      },
-      {
-        $sort: { totalRevenue: -1 },
-      },
+      // Rest of pipeline remains same
     ];
 
     return await BookingRepo.aggregate(pipeline);
   }
 
-  // Tính doanh thu theo quý
-  static async calculateRevenueByQuarter(year) {
+  // Calculate revenue by quarter
+  static async calculateRevenueByQuarter(quarter) {
+    // const { startDate, endDate } = this._getDateRange(year);
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    if (quarter < 1 || quarter > 4) {
+      throw new BadRequestError("Invalid quarter");
+    }
+
+    if (quarter === 1) {
+      var startDate = new Date(Date.UTC(currentYear, 0, 1, 0, 0, 0));
+      var endDate = new Date(Date.UTC(currentYear, 2, 31, 23, 59, 59));
+    } else if (quarter === 2) {
+      var startDate = new Date(Date.UTC(currentYear, 3, 1, 0, 0, 0));
+      var endDate = new Date(Date.UTC(currentYear, 5, 30, 23, 59, 59));
+    } else if (quarter === 3) {
+      var startDate = new Date(Date.UTC(currentYear, 6, 1, 0, 0, 0));
+      var endDate = new Date(Date.UTC(currentYear, 8, 30, 23, 59, 59));
+    } else {
+      var startDate = new Date(Date.UTC(currentYear, 9, 1, 0, 0, 0));
+      var endDate = new Date(Date.UTC(currentYear, 11, 31, 23, 59, 59));
+    }
+
     const pipeline = [
       {
         $match: {
           status: "success",
-          createdAt: {
-            $gte: new Date(`${year}-01-01`),
-            $lte: new Date(`${year}-12-31`),
+          updatedAt: {
+            $gte: startDate,
+            $lte: endDate,
           },
         },
       },
       {
         $group: {
           _id: {
+            year: { $year: "$updatedAt" },
             quarter: {
               $ceil: {
-                $divide: [{ $month: "$createdAt" }, 3],
+                $divide: [{ $month: "$updatedAt" }, 3],
               },
             },
           },
@@ -85,39 +123,46 @@ class StatisticalService {
         },
       },
       {
-        $sort: { "_id.quarter": 1 },
+        $sort: {
+          "_id.year": 1,
+          "_id.quarter": 1,
+        },
       },
     ];
 
     return await BookingRepo.aggregate(pipeline);
   }
 
-  // Tính doanh thu theo tháng
-  static async calculateRevenueByMonth(year, month) {
+  // Calculate revenue by month
+  static async calculateRevenueByMonth(month) {
+    // const { startDate, endDate } = this._getDateRange(year, month);
+
+    // this month
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = month || now.getMonth() + 1;
+    console.log(currentYear, currentMonth);
+
+    const { startDate, endDate } = this._getDateRange(
+      currentYear,
+      currentMonth
+    );
+
     const pipeline = [
       {
         $match: {
           status: "success",
-          ...(month
-            ? {
-                createdAt: {
-                  $gte: new Date(`${year}-${month}-01`),
-                  $lte: new Date(`${year}-${month}-31`),
-                },
-              }
-            : {
-                createdAt: {
-                  $gte: new Date(`${year}-01-01`),
-                  $lte: new Date(`${year}-12-31`),
-                },
-              }),
+          updatedAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
         },
       },
       {
         $group: {
           _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" },
+            year: { $year: "$updatedAt" },
+            month: { $month: "$updatedAt" },
           },
           totalRevenue: { $sum: "$total_price" },
           totalBookings: { $sum: 1 },
@@ -135,97 +180,145 @@ class StatisticalService {
     return await BookingRepo.aggregate(pipeline);
   }
 
-  // Thống kê tour được đặt nhiều nhất
-  static async getMostBookedTours(limit = 10, fromDate, toDate) {
+  // Calculate revenue by day
+  static async calculateRevenueByDay(day) {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+
+    const { startDate, endDate } = this._getDateRange(
+      currentYear,
+      currentMonth,
+      day
+    );
+
     const pipeline = [
       {
         $match: {
           status: "success",
-          ...(fromDate && toDate
-            ? {
-                createdAt: {
-                  $gte: new Date(fromDate),
-                  $lte: new Date(toDate),
-                },
-              }
-            : {}),
+          updatedAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
         },
       },
       {
         $group: {
-          _id: "$tour",
-          bookingCount: { $sum: 1 },
+          _id: {
+            year: { $year: "$updatedAt" },
+            month: { $month: "$updatedAt" },
+            day: { $dayOfMonth: "$updatedAt" },
+          },
           totalRevenue: { $sum: "$total_price" },
-          totalPeople: { $sum: "$number_of_people" },
+          totalBookings: { $sum: 1 },
+          averageBookingValue: { $avg: "$total_price" },
         },
       },
       {
-        $lookup: {
-          from: "Tours",
-          localField: "_id",
-          foreignField: "_id",
-          as: "tourDetails",
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+          "_id.day": 1,
         },
-      },
-      {
-        $unwind: "$tourDetails",
-      },
-      {
-        $project: {
-          tourName: "$tourDetails.name",
-          bookingCount: 1,
-          totalRevenue: 1,
-          totalPeople: 1,
-          averageRevenue: { $divide: ["$totalRevenue", "$bookingCount"] },
-        },
-      },
-      {
-        $sort: { bookingCount: -1 },
-      },
-      {
-        $limit: parseInt(limit),
       },
     ];
 
     return await BookingRepo.aggregate(pipeline);
   }
 
-  // Thống kê tổng quan
-  static async getDashboardStats() {
-    // Tổng doanh thu
-    const totalRevenue = await BookingRepo.aggregate([
+  // Get most booked tours
+  static async getMostBookedTours(limit, fromDate, toDate) {
+    const dateQuery = {};
+    if (fromDate && toDate) {
+      dateQuery.updatedAt = {
+        $gte: new Date(fromDate),
+        $lte: new Date(toDate),
+      };
+    }
+
+    const pipeline = [
       {
-        $match: { status: "success" },
+        $match: {
+          status: "success",
+          ...dateQuery,
+        },
       },
       {
         $group: {
-          _id: null,
-          total: { $sum: "$total_price" },
+          _id: "$tour",
+          totalBookings: { $sum: 1 },
+          totalRevenue: { $sum: "$total_price" },
+          averageBookingValue: { $avg: "$total_price" },
         },
       },
-    ]);
+      {
+        $sort: {
+          totalBookings: -1,
+        },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $lookup: {
+          from: "tours",
+          localField: "_id",
+          foreignField: "_id",
+          as: "tour",
+        },
+      },
+      {
+        $unwind: "$tour",
+      },
+      {
+        $project: {
+          _id: 0,
+          tour: {
+            _id: 1,
+            name: 1,
+            price: 1,
+            thumbnail_url: 1,
+            destination: 1,
+          },
+          totalBookings: 1,
+          totalRevenue: 1,
+          averageBookingValue: 1,
+        },
+      },
+    ];
 
-    // Tổng số booking
-    const totalBookings = await BookingRepo.countDocuments({
-      status: "success",
-    });
+    return await BookingRepo.aggregate(pipeline);
+  }
 
-    // Booking trong tháng hiện tại
-    const currentMonth = new Date().getMonth() + 1;
-    const currentYear = new Date().getFullYear();
-    const monthlyBookings = await this.calculateRevenueByMonth(
+  // Dashboard stats with proper date handling
+  static async getDashboardStats() {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+
+    // Get current month's stats
+    const monthlyStats = await this.calculateRevenueByMonth(
       currentYear,
       currentMonth
     );
 
-    // Tour được đặt nhiều nhất
-    const topTours = await this.getMostBookedTours(5);
+    // Get yearly stats
+    const yearlyStats = await this.calculateRevenueByQuarter(currentYear);
+
+    // Get top tours (last 30 days)
+    const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
+    const topTours = await this.getMostBookedTours(
+      5,
+      thirtyDaysAgo.toISOString(),
+      new Date().toISOString()
+    );
 
     return {
-      totalRevenue: totalRevenue[0]?.total || 0,
-      totalBookings,
-      monthlyStats: monthlyBookings,
-      topTours,
+      currentMonth: monthlyStats[0] || { totalRevenue: 0, totalBookings: 0 },
+      yearlyStats: yearlyStats,
+      last30Days: {
+        topTours,
+      },
     };
   }
 }

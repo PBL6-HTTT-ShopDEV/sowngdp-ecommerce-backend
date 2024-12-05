@@ -24,6 +24,10 @@ router.put(
   asyncHandler(AccountController.updateAccount)
 ); // example: /account/update?userId=123
 router.delete("/account/delete", asyncHandler(AccountController.deleteAccount)); // example: /account/delete?userId=123
+router.delete(
+  "/account/delete-favourite",
+  asyncHandler(AccountController.deleteFavouriteTour)
+); // example: /account/delete-favourite?userId=123&tourId=456
 router.get("/account/get", asyncHandler(AccountController.getAccountById)); // example: /account/get?userId=123
 router.get(
   "/account/favourite",
