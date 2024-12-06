@@ -56,7 +56,12 @@ class StatisticalService {
     // day format: yyyy-mm-dd
     const fromDate = new Date(fromday);
     const toDate = new Date(toDay);
-
+    // console.log(fromDate, toDate);
+    console.log(
+      fromDate.getFullYear(),
+      fromDate.getMonth(),
+      fromDate.getDate()
+    );
     return {
       startDate: new Date(
         Date.UTC(
@@ -71,7 +76,7 @@ class StatisticalService {
       endDate: new Date(
         Date.UTC(
           toDate.getFullYear(),
-          toDate.getMonth(),
+          toDate.getMonth() + 1,
           toDate.getDate(),
           23,
           59,
@@ -85,13 +90,14 @@ class StatisticalService {
   static async calculateRevenueByTour(fromDate, toDate) {
     const dateQuery = {};
     if (fromDate && toDate) {
-      const { fromDay, toDay } = this._getDateRangeFromDateToDate(
+      const { startDate, endDate } = this._getDateRangeFromDateToDate(
         fromDate,
         toDate
       );
+      console.log(startDate, endDate);
       dateQuery.updatedAt = {
-        $gte: new Date(fromDay),
-        $lte: new Date(toDay),
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
       };
     }
 
@@ -114,17 +120,19 @@ class StatisticalService {
     const startToday = new Date(
       Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
     ); // Start of today
+    console.log(startToday);
     const endToday = new Date( // End of today
       Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
     );
 
+    console.log(endToday);
     const pipeline = [
       {
         $match: {
           status: "success",
           updatedAt: {
-            $gte: today,
-            $lt: tomorrow,
+            $gte: startToday,
+            $lt: endToday,
           },
         },
       },

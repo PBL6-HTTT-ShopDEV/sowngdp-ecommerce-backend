@@ -23,7 +23,7 @@ class StatisticalController {
     return new Success({
       message: "Get revenue by tour of today success!",
       metadata: statistics,
-    }).send;
+    }).send(res);
   }
 
   // Thống kê doanh thu theo quý
