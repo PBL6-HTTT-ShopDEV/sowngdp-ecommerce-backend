@@ -23,6 +23,11 @@ router.get(
   asyncHandler(StatisticalController.getRevenueByMonth)
 );
 
+router.get(
+  "/revenue/days",
+  asyncHandler(StatisticalController.getRevenueByDay)
+);
+
 // Booking statistics
 router.get(
   "/bookings/most-booked",

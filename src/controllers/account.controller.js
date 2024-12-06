@@ -16,6 +16,15 @@ class AccountController {
     }).send(res);
   };
 
+  static deleteFavouriteTour = async (req, res, next) => {
+    const { userId, tourId } = req.query;
+    const account = await AccountService.deleteFavoriteTour(userId, tourId);
+    return new Success({
+      message: "Delete favorite tour success!",
+      metadata: account,
+    }).send(res);
+  };
+
   static createAccount = async (req, res, next) => {
     const { user_name, email, password } = req.body;
     const account = await AccountService.createAccount({
