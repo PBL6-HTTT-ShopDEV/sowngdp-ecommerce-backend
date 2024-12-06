@@ -15,6 +15,10 @@ router.get(
   asyncHandler(StatisticalController.getRevenueByTour)
 );
 router.get(
+  "/revenue/tours/today",
+  asyncHandler(StatisticalController.getRevenueByTourOfToday)
+);
+router.get(
   "/revenue/quarters",
   asyncHandler(StatisticalController.getRevenueByQuarter)
 );

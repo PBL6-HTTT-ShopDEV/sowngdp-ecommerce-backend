@@ -18,6 +18,14 @@ class StatisticalController {
     }).send(res);
   }
 
+  static async getRevenueByTourOfToday(req, res) {
+    const statistics = await StatisticalService.calculateRevenueByTourOfToday();
+    return new Success({
+      message: "Get revenue by tour of today success!",
+      metadata: statistics,
+    }).send;
+  }
+
   // Thống kê doanh thu theo quý
   static async getRevenueByQuarter(req, res) {
     const { quarter } = req.query;
