@@ -7,18 +7,18 @@ class AccountService {
   }
   static async addFavoriteTour(userId, tourId) {
     const account = await accountModel.findById(userId);
-    // check if tourId is already in favoriteTours
-    if (account.favoriteTours.includes(tourId)) {
+    // check if tourId is already in favourite_lists
+    if (account.favourite_lists.includes(tourId)) {
       throw new Error("Tour is already in favorite list");
     }
-    account.favoriteTours.push(tourId);
+    account.favourite_lists.push(tourId);
     await account.save();
     return account;
   }
 
   static async deleteFavoriteTour(userId, tourId) {
     const account = await accountModel.findById(userId);
-    account.favoriteTours = account.favoriteTours.filter((item) => item.toString() !== tourId);
+    account.favourite_lists = account.favourite_lists.filter((item) => item.toString() !== tourId);
     await account.save();
     return account;
   }
