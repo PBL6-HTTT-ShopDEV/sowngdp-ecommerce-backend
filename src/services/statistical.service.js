@@ -111,12 +111,12 @@ class StatisticalService {
   // Calculate revenue by tour of today
   static async calculateRevenueByTourOfToday() {
     const now = new Date();
-    const today = new Date(
+    const startToday = new Date(
       Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
     ); // Start of today
-    const tomorrow = new Date(
-      Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0)
-    ); // Start of tomorrow
+    const endToday = new Date( // End of today
+      Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+    );
 
     const pipeline = [
       {
