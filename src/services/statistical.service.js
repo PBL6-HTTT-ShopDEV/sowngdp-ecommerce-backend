@@ -85,7 +85,10 @@ class StatisticalService {
   static async calculateRevenueByTour(fromDate, toDate) {
     const dateQuery = {};
     if (fromDate && toDate) {
-      const { fromDay, toDay } = getDateRangeFromDateToDate(fromDate, toDate);
+      const { fromDay, toDay } = this._getDateRangeFromDateToDate(
+        fromDate,
+        toDate
+      );
       dateQuery.updatedAt = {
         $gte: new Date(fromDay),
         $lte: new Date(toDay),
