@@ -11,7 +11,7 @@ class AccountService {
     if (account.favoriteTours.includes(tourId)) {
       throw new Error("Tour is already in favorite list");
     }
-    account.favoriteTours.push(tourId);
+    account.favourite_lists.push(tourId);
     await account.save();
     return account;
   }

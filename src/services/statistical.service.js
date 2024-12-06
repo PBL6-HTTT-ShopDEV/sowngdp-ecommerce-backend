@@ -16,6 +16,7 @@ class StatisticalService {
 
     // If month provided, validate it
     if (month) {
+      console.log("month", month);
       const monthNum = parseInt(month);
       if (isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
         throw new BadRequestError("Invalid month");
@@ -50,13 +51,44 @@ class StatisticalService {
     };
   }
 
+  static _getDateRangeFromDateToDate(fromday, toDay) {
+    // Validate year
+    // day format: yyyy-mm-dd
+    const fromDate = new Date(fromday);
+    const toDate = new Date(toDay);
+
+    return {
+      startDate: new Date(
+        Date.UTC(
+          fromDate.getFullYear(),
+          fromDate.getMonth(),
+          fromDate.getDate(),
+          0,
+          0,
+          0
+        )
+      ),
+      endDate: new Date(
+        Date.UTC(
+          toDate.getFullYear(),
+          toDate.getMonth(),
+          toDate.getDate(),
+          23,
+          59,
+          59
+        )
+      ),
+    };
+  }
+
   // Calculate revenue by tour with date range
   static async calculateRevenueByTour(fromDate, toDate) {
     const dateQuery = {};
     if (fromDate && toDate) {
+      const { fromDay, toDay } = getDateRangeFromDateToDate(fromDate, toDate);
       dateQuery.updatedAt = {
-        $gte: new Date(fromDate),
-        $lte: new Date(toDate),
+        $gte: new Date(fromDay),
+        $lte: new Date(toDay),
       };
     }
 
@@ -73,27 +105,58 @@ class StatisticalService {
     return await BookingRepo.aggregate(pipeline);
   }
 
+  // Calculate revenue by tour of today
+  static async calculateRevenueByTourOfToday() {
+    const now = new Date();
+    const today = new Date(
+      Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
+    ); // Start of today
+    const tomorrow = new Date(
+      Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0)
+    ); // Start of tomorrow
+
+    const pipeline = [
+      {
+        $match: {
+          status: "success",
+          updatedAt: {
+            $gte: today,
+            $lt: tomorrow,
+          },
+        },
+      },
+      // Rest of pipeline remains same
+    ];
+
+    return await BookingRepo.aggregate(pipeline);
+  }
+
   // Calculate revenue by quarter
   static async calculateRevenueByQuarter(quarter) {
     // const { startDate, endDate } = this._getDateRange(year);
     const now = new Date();
     const currentYear = now.getFullYear();
 
-    if (quarter < 1 || quarter > 4) {
-      throw new BadRequestError("Invalid quarter");
-    }
+    if (quarter) {
+      if (quarter < 1 || quarter > 4) {
+        throw new BadRequestError("Invalid quarter");
+      }
 
-    if (quarter === 1) {
-      var startDate = new Date(Date.UTC(currentYear, 0, 1, 0, 0, 0));
-      var endDate = new Date(Date.UTC(currentYear, 2, 31, 23, 59, 59));
-    } else if (quarter === 2) {
-      var startDate = new Date(Date.UTC(currentYear, 3, 1, 0, 0, 0));
-      var endDate = new Date(Date.UTC(currentYear, 5, 30, 23, 59, 59));
-    } else if (quarter === 3) {
-      var startDate = new Date(Date.UTC(currentYear, 6, 1, 0, 0, 0));
-      var endDate = new Date(Date.UTC(currentYear, 8, 30, 23, 59, 59));
+      if (quarter === 1) {
+        var startDate = new Date(Date.UTC(currentYear, 0, 1, 0, 0, 0));
+        var endDate = new Date(Date.UTC(currentYear, 2, 31, 23, 59, 59));
+      } else if (quarter === 2) {
+        var startDate = new Date(Date.UTC(currentYear, 3, 1, 0, 0, 0));
+        var endDate = new Date(Date.UTC(currentYear, 5, 30, 23, 59, 59));
+      } else if (quarter === 3) {
+        var startDate = new Date(Date.UTC(currentYear, 6, 1, 0, 0, 0));
+        var endDate = new Date(Date.UTC(currentYear, 8, 30, 23, 59, 59));
+      } else {
+        var startDate = new Date(Date.UTC(currentYear, 9, 1, 0, 0, 0));
+        var endDate = new Date(Date.UTC(currentYear, 11, 31, 23, 59, 59));
+      }
     } else {
-      var startDate = new Date(Date.UTC(currentYear, 9, 1, 0, 0, 0));
+      var startDate = new Date(Date.UTC(currentYear, 0, 1, 0, 0, 0));
       var endDate = new Date(Date.UTC(currentYear, 11, 31, 23, 59, 59));
     }
 
@@ -297,13 +360,10 @@ class StatisticalService {
     const currentMonth = now.getMonth() + 1;
 
     // Get current month's stats
-    const monthlyStats = await this.calculateRevenueByMonth(
-      currentYear,
-      currentMonth
-    );
+    const monthlyStats = await this.calculateRevenueByMonth(currentMonth);
 
     // Get yearly stats
-    const yearlyStats = await this.calculateRevenueByQuarter(currentYear);
+    const yearlyStats = await this.calculateRevenueByQuarter();
 
     // Get top tours (last 30 days)
     const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
