@@ -398,7 +398,7 @@ class StatisticalService {
       {
         $match: {
           status: "success",
-          createdAt: {
+          updatedAt: {
             $gte: startDate,
             $lte: endDate,
           },
@@ -457,7 +457,7 @@ class StatisticalService {
       {
         $match: {
           status: "success",
-          createdAt: {
+          updateAt: {
             $gte: startDate,
             $lte: endDate,
           },
