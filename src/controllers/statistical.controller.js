@@ -80,6 +80,46 @@ class StatisticalController {
       metadata: statistics,
     }).send(res);
   }
+
+  // Get top booked tours by month
+  static async getTopBookedToursByMonth(req, res) {
+    const { month, year, limit = 10 } = req.query;
+
+    if (!month || !year) {
+      throw new BadRequestError("Month and year are required");
+    }
+
+    const statistics = await StatisticalService.getTopBookedToursByMonth(
+      parseInt(month),
+      parseInt(year),
+      parseInt(limit)
+    );
+
+    return new Success({
+      message: "Get top booked tours by month success!",
+      metadata: statistics,
+    }).send(res);
+  }
+
+  // Get top revenue tours by month
+  static async getTopRevenueToursByMonth(req, res) {
+    const { month, year, limit = 10 } = req.query;
+
+    if (!month || !year) {
+      throw new BadRequestError("Month and year are required");
+    }
+
+    const statistics = await StatisticalService.getTopRevenueToursByMonth(
+      parseInt(month),
+      parseInt(year),
+      parseInt(limit)
+    );
+
+    return new Success({
+      message: "Get top revenue tours by month success!",
+      metadata: statistics,
+    }).send(res);
+  }
 }
 
 module.exports = StatisticalController;

@@ -128,11 +128,6 @@ class TourController {
     }).send(res);
   }
 
-  // example json body for delete tour
-  // {
-  //     "tourId": "5f7d2e9f5b1b4b0017f4e0f4"
-  // }
-
   static async getTourByCategory(req, res, next) {
     const tours = await TourService.getTourByCategory(req.params.categoryId);
     return new Success({

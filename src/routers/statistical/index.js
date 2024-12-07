@@ -38,6 +38,16 @@ router.get(
   asyncHandler(StatisticalController.getMostBookedTours)
 );
 
+router.get(
+  "/tours/top-booked",
+  asyncHandler(StatisticalController.getTopBookedToursByMonth)
+);
+
+router.get(
+  "/tours/top-revenue",
+  asyncHandler(StatisticalController.getTopRevenueToursByMonth)
+);
+
 // Dashboard overview
 router.get("/dashboard", asyncHandler(StatisticalController.getDashboardStats)); // example: /v1/api/statistical/dashboard
 

@@ -388,6 +388,125 @@ class StatisticalService {
       }
     );
   }
+
+  // Get top tours by booking count for specific month/year
+  static async getTopBookedToursByMonth(month, year, limit = 10) {
+    const startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
+    const endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59));
+
+    const pipeline = [
+      {
+        $match: {
+          status: "success",
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$tour",
+          bookingCount: { $sum: 1 },
+          totalPeople: { $sum: "$number_of_people" },
+          totalRevenue: { $sum: "$total_price" },
+        },
+      },
+      {
+        $lookup: {
+          from: "Tours",
+          localField: "_id",
+          foreignField: "_id",
+          as: "tourDetails",
+        },
+      },
+      {
+        $unwind: "$tourDetails",
+      },
+      {
+        $project: {
+          _id: 0,
+          tour: {
+            _id: "$tourDetails._id",
+            name: "$tourDetails.name",
+            destination: "$tourDetails.destination",
+            thumbnail_url: "$tourDetails.thumbnail_url",
+          },
+          bookingCount: 1,
+          totalPeople: 1,
+          totalRevenue: 1,
+        },
+      },
+      {
+        $sort: { bookingCount: -1 },
+      },
+      {
+        $limit: limit,
+      },
+    ];
+
+    return await BookingRepo.aggregate(pipeline);
+  }
+
+  // Get top tours by revenue for specific month/year
+  static async getTopRevenueToursByMonth(month, year, limit = 10) {
+    const startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
+    const endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59));
+
+    const pipeline = [
+      {
+        $match: {
+          status: "success",
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$tour",
+          totalRevenue: { $sum: "$total_price" },
+          bookingCount: { $sum: 1 },
+          totalPeople: { $sum: "$number_of_people" },
+        },
+      },
+      {
+        $lookup: {
+          from: "Tours",
+          localField: "_id",
+          foreignField: "_id",
+          as: "tourDetails",
+        },
+      },
+      {
+        $unwind: "$tourDetails",
+      },
+      {
+        $project: {
+          _id: 0,
+          tour: {
+            _id: "$tourDetails._id",
+            name: "$tourDetails.name",
+            destination: "$tourDetails.destination",
+            thumbnail_url: "$tourDetails.thumbnail_url",
+          },
+          totalRevenue: 1,
+          bookingCount: 1,
+          totalPeople: 1,
+          averageRevenue: { $divide: ["$totalRevenue", "$bookingCount"] },
+        },
+      },
+      {
+        $sort: { totalRevenue: -1 },
+      },
+      {
+        $limit: limit,
+      },
+    ];
+
+    return await BookingRepo.aggregate(pipeline);
+  }
 }
 
 module.exports = StatisticalService;
