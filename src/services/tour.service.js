@@ -43,7 +43,7 @@ class TourService {
     // Upload images array
     if (imageFiles.length > 0) {
       const firebaseStorage = FirebaseStorage.getInstance();
-      const imageUrls = await firebaseStorage.uploadImage(imageFiles);
+      const imageUrls = await firebaseStorage.uploadImages(imageFiles);
       tourData.image_url = imageUrls;
     } else {
       tourData.images = []; // Or handle as per your requirements
@@ -74,7 +74,7 @@ class TourService {
     }
     if (imageFiles.length > 0) {
       const firebaseStorage = FirebaseStorage.getInstance();
-      const imageUrls = await firebaseStorage.updateImage(
+      const imageUrls = await firebaseStorage.uploadImages(
         oldTour.image_url,
         imageFiles
       );
