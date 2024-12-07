@@ -41,7 +41,9 @@ class BookingService {
     );
 
     if (!isAvailable) {
-      throw new BadRequestError("Tour is not available for selected date/people");
+      throw new BadRequestError(
+        "Tour is not available for selected date/people"
+      );
     }
 
     const booking = await BookingRepo.createBooking({
@@ -115,7 +117,12 @@ class BookingService {
       return total;
     }, 0);
 
-    console.log("Booked spots", bookedSpots, numberOfPeople, tour.max_group_size);
+    console.log(
+      "Booked spots",
+      bookedSpots,
+      numberOfPeople,
+      tour.max_group_size
+    );
     // Kiểm tra nếu còn đủ chỗ
     return bookedSpots + numberOfPeople <= tour.max_group_size;
   }
@@ -127,7 +134,9 @@ class BookingService {
     }
 
     if (booking.user.toString() !== userId) {
-      throw new BadRequestError("Not authorized to process payment for this booking");
+      throw new BadRequestError(
+        "Not authorized to process payment for this booking"
+      );
     }
 
     // Here you would integrate with a payment provider
@@ -138,6 +147,33 @@ class BookingService {
     });
 
     return updatedBooking;
+  }
+
+  static async getBookingsByTimeRange(fromDate, toDate) {
+    if (!fromDate || !toDate) {
+      throw new BadRequestError("From date and to date are required");
+    }
+
+    const startDate = new Date(fromDate);
+    const endDate = new Date(toDate);
+
+    // Validate dates
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      throw new BadRequestError("Invalid date format");
+    }
+
+    if (startDate > endDate) {
+      throw new BadRequestError("Start date must be before end date");
+    }
+
+    const bookings = await BookingRepo.getBookings({
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+
+    return bookings;
   }
 }
 
