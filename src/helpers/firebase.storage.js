@@ -81,6 +81,7 @@ class FirebaseStorage {
     const newUrls = [];
     for (const url of urls) {
       await this.deleteImage(url);
+      console.log("Deleted image:", url);
     }
     for (const file of files) {
       const newUrl = await this.uploadImage(file);

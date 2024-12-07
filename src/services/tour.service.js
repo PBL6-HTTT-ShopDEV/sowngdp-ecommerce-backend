@@ -61,7 +61,7 @@ class TourService {
     return tour;
   }
 
-  static async updateTour(id, data, thumbnailFile, imageFiles) {
+  static async updateTour(id, data, thumbnailFile, imageFiles, userId) {
     // Upload thumbnail
     const oldTour = await tourRepo.getTourById(id);
     if (thumbnailFile) {
@@ -74,7 +74,7 @@ class TourService {
     }
     if (imageFiles.length > 0) {
       const firebaseStorage = FirebaseStorage.getInstance();
-      const imageUrls = await firebaseStorage.uploadImages(
+      const imageUrls = await firebaseStorage.updateImages(
         oldTour.image_url,
         imageFiles
       );

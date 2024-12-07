@@ -354,33 +354,39 @@ class StatisticalService {
     return await BookingRepo.aggregate(pipeline);
   }
 
-  // Dashboard stats with proper date handling
   static async getDashboardStats() {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1;
-
-    // Get current month's stats
-    const monthlyStats = await this.calculateRevenueByMonth(currentMonth);
-
-    // Get yearly stats
-    const yearlyStats = await this.calculateRevenueByQuarter();
-
-    // Get top tours (last 30 days)
-    const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
-    const topTours = await this.getMostBookedTours(
-      5,
-      thirtyDaysAgo.toISOString(),
-      new Date().toISOString()
-    );
-
-    return {
-      currentMonth: monthlyStats[0] || { totalRevenue: 0, totalBookings: 0 },
-      yearlyStats: yearlyStats,
-      last30Days: {
-        topTours,
+    const pipeline = [
+      {
+        $match: {
+          status: "success", // Only count successful bookings
+        },
       },
-    };
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$total_price" },
+          totalBookings: { $sum: 1 },
+          totalBookedPeople: { $sum: "$number_of_people" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalRevenue: 1,
+          totalBookings: 1,
+          totalBookedPeople: 1,
+        },
+      },
+    ];
+
+    const result = await BookingRepo.aggregate(pipeline);
+    return (
+      result[0] || {
+        totalRevenue: 0,
+        totalBookings: 0,
+        totalBookedPeople: 0,
+      }
+    );
   }
 }
 

@@ -105,6 +105,7 @@ class TourController {
     const userId = req.headers[HEADER.CLIENT_ID];
 
     const thumbnailFile = files["thumbnail"] ? files["thumbnail"][0] : null;
+    console.log("thumbnailFile", thumbnailFile);
     const imageFiles = files["images"] || [];
     const tour = await TourService.updateTour(
       req.query.id,
