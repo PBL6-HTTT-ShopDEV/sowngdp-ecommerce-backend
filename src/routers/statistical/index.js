@@ -24,7 +24,7 @@ router.get(
 );
 router.get(
   "/revenue/months",
-  asyncHandler(StatisticalController.getRevenueByMonth)
+  asyncHandler(StatisticalController.calculateRevenueOfEachMonth)
 );
 
 router.get(

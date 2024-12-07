@@ -208,27 +208,17 @@ class StatisticalService {
   }
 
   // Calculate revenue by month
-  static async calculateRevenueByMonth(month) {
-    // const { startDate, endDate } = this._getDateRange(year, month);
-
-    // this month
+  static async calculateRevenueOfEachMonth() {
     const now = new Date();
     const currentYear = now.getFullYear();
-    const currentMonth = month || now.getMonth() + 1;
-    console.log(currentYear, currentMonth);
-
-    const { startDate, endDate } = this._getDateRange(
-      currentYear,
-      currentMonth
-    );
 
     const pipeline = [
       {
         $match: {
           status: "success",
           updatedAt: {
-            $gte: startDate,
-            $lte: endDate,
+            $gte: new Date(Date.UTC(currentYear, 0, 1, 0, 0, 0)),
+            $lte: new Date(Date.UTC(currentYear, 11, 31, 23, 59, 59)),
           },
         },
       },

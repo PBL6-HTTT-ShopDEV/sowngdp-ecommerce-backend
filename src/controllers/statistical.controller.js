@@ -39,11 +39,10 @@ class StatisticalController {
   }
 
   // Thống kê doanh thu theo tháng
-  static async getRevenueByMonth(req, res) {
-    const { month } = req.query;
-    // console.log(year, month);
+  static async calculateRevenueOfEachMonth(req, res) {
+    // get all months in this year
     console.log("getRevenueByMonth");
-    const statistics = await StatisticalService.calculateRevenueByMonth(month);
+    const statistics = await StatisticalService.calculateRevenueOfEachMonth();
     return new Success({
       message: "Get revenue by month success!",
       metadata: statistics,
