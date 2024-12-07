@@ -24,7 +24,7 @@ router.get("/tourbyid", asyncHandler(TourController.getTourById)); // example: /
 
 // example url = "http://localhost:3055/v1/api/tours?page=1&limit=10&categoryId=5f3d9f7b2e6d2d0017d5b9d1&price=1000000"
 router.get("/tour", asyncHandler(TourController.getTours)); // example: /tour?page=1&limit=10&categoryId=5f3d9f7b2e6d2d0017d5b9d1&price=1000000
-
+router.get("/tour-all", asyncHandler(TourController.getAllTour)); // example: /tour-all
 // router.use();
 router.post("/tour", createTourUpload, asyncHandler(TourController.createTour));
 router.post("/tour/addFavorite", asyncHandler(TourController.addFavoriteTour)); // example: /tour/addFavorite?tourId=123
