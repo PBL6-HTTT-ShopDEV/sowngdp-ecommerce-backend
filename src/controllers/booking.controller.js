@@ -77,7 +77,11 @@ class BookingController {
   // Check availability
   static async checkAvailability(req, res, next) {
     const { tourId, date, numberOfPeople } = req.query;
-    const available = await BookingService.checkAvailability(tourId, date, numberOfPeople);
+    const available = await BookingService.checkAvailability(
+      tourId,
+      date,
+      numberOfPeople
+    );
     return new Success({
       message: "Check availability success!",
       metadata: { available },
@@ -88,10 +92,35 @@ class BookingController {
   static async processPayment(req, res, next) {
     const { bookingId } = req.params;
     const userId = req.headers["x-client-id"];
-    const payment = await BookingService.processPayment(bookingId, userId, req.body);
+    const payment = await BookingService.processPayment(
+      bookingId,
+      userId,
+      req.body
+    );
     return new Success({
       message: "Process payment success!",
       metadata: payment,
+    }).send(res);
+  }
+
+  // Get bookings by time range
+  static async getBookingByTime(req, res, next) {
+    const { fromDate, toDate } = req.query;
+    const bookings = await BookingService.getBookingsByTimeRange(
+      fromDate,
+      toDate
+    );
+
+    return new Success({
+      message: "Get bookings by time range success!",
+      metadata: {
+        bookings,
+        total: bookings.length,
+        timeRange: {
+          from: fromDate,
+          to: toDate,
+        },
+      },
     }).send(res);
   }
 }

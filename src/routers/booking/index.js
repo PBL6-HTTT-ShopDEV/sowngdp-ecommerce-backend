@@ -31,6 +31,12 @@ router.get(
   asyncHandler(BookingController.getBookingsByUser)
 );
 
+// get booking by time
+router.get(
+  "/bookings/time", // Changed from /bookings/time/:time
+  asyncHandler(BookingController.getBookingByTime)
+);
+
 // Booking payment and confirmation
 router.post(
   "/bookings/:id/payment",
