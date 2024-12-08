@@ -20,7 +20,7 @@ router.get(
 
 // Booking management
 router.get("/bookings", asyncHandler(BookingController.getAllBooking));
-router.get("/bookings/:id", asyncHandler(BookingController.getBookingById));
+router.get("/bookings/:id", asyncHandler(BookingController.getBookingById)); // example: /bookings/123
 router.post("/bookings", asyncHandler(BookingController.createBooking)); // example: /bookings?tourId=123
 router.put("/bookings", asyncHandler(BookingController.updateBooking));
 router.delete("/bookings", asyncHandler(BookingController.cancelBooking));

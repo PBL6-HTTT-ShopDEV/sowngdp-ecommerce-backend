@@ -453,11 +453,14 @@ class StatisticalService {
     const startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
     const endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59));
 
+    console.log(startDate, endDate);
+
     const pipeline = [
       {
         $match: {
           status: "success",
-          updateAt: {
+          updatedAt: {
+            // Typo here: should be 'updatedAt'
             $gte: startDate,
             $lte: endDate,
           },

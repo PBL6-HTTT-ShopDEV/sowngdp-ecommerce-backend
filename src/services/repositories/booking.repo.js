@@ -20,12 +20,9 @@ class BookingRepo {
       .lean();
   }
 
-  static async getBookingById(id, tourid, userid) {
+  static async getBookingById(id) {
     const query = {};
     if (id) query._id = id;
-    if (tourid) query.tour = tourid;
-    if (userid) query.user = userid;
-
     return await bookingModel
       .findOne(query)
       .populate("tour", "name price thumbnail_url destination")

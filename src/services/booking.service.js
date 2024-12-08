@@ -10,9 +10,8 @@ class BookingService {
     return await BookingRepo.getAllBooking();
   }
 
-  static async getBookingById(query) {
-    const { id, tourid, userid } = query;
-    return await BookingRepo.getBookingById(id, tourid, userid);
+  static async getBookingById(id) {
+    return await BookingRepo.getBookingById(id);
   }
 
   static async getBookingByUserId(userId) {
@@ -167,7 +166,7 @@ class BookingService {
     }
 
     const bookings = await BookingRepo.getBookings({
-      createdAt: {
+      updatedAt: {
         $gte: startDate,
         $lte: endDate,
       },

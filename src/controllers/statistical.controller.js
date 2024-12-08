@@ -105,6 +105,8 @@ class StatisticalController {
   static async getTopRevenueToursByMonth(req, res) {
     const { month, year, limit = 10 } = req.query;
 
+    console.log("month, year, limit", month, year, limit);
+
     if (!month || !year) {
       throw new BadRequestError("Month and year are required");
     }
