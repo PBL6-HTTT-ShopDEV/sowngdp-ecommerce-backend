@@ -33,7 +33,7 @@ router.get(
 
 // get booking by time
 router.get(
-  "/bookings/time", // Changed from /bookings/time/:time
+  "/bookings/by-time/time", // Changed from /bookings/time/:time
   asyncHandler(BookingController.getBookingByTime)
 );
 
