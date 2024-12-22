@@ -22,6 +22,10 @@ class BookingService {
     return await BookingRepo.getBookingByTourId(tourId);
   }
 
+  static async getBookingToday() {
+    return await BookingRepo.getBookingToday();
+  }
+
   static async createBooking(bookingData, userId) {
     // Validate tour exists
     const tour = await TourService.getTourById(bookingData.tour);

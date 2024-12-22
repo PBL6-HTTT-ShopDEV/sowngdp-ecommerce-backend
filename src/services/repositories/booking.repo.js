@@ -38,6 +38,23 @@ class BookingRepo {
       .lean();
   }
 
+  static async getBookingToday() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return await bookingModel
+      .find({
+        created_at: {
+          $gte: today,
+          $lt: tomorrow,
+        },
+      })
+      .populate("tour", "name price thumbnail_url destination")
+      .populate("user", "name email")
+      .lean();
+  }
+
   static async createBooking(data) {
     const booking = await bookingModel.create(data);
     return await booking.populate([

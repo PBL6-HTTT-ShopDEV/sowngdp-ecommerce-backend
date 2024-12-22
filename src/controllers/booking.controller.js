@@ -22,6 +22,14 @@ class BookingController {
     }).send(res);
   }
 
+  static async getBookingToday(req, res, next) {
+    const bookings = await BookingService.getBookingToday();
+    return new Success({
+      message: "Get today's bookings success!",
+      metadata: bookings,
+    }).send(res);
+  }
+
   // Get bookings by tour id (public)
   static async getBookingByTourId(req, res, next) {
     const bookings = await BookingService.getBookingByTourId(req.params.tourId);
