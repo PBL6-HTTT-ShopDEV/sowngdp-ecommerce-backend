@@ -10,7 +10,16 @@ class TourRepo {
   }
 
   static async getTourById(id) {
+    console.log('[Repository] 🔍 Tìm tour với ID:', id);
     const tour = await tourModel.findById(id).lean();
+    console.log('[Repository] 📦 Kết quả:', {
+      found: !!tour,
+      tourData: tour ? {
+        id: tour._id,
+        name: tour.name,
+        status: tour.status
+      } : null
+    });
     return tour;
   }
 

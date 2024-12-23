@@ -1,10 +1,21 @@
 "use strict";
+require('dotenv').config();
+
+// Thêm console.log để debug
+console.log('Environment variables:', {
+    NODE_ENV: process.env.NODE_ENV,
+    DEV_DB_PROTOCOL: process.env.DEV_DB_PROTOCOL,
+    DEV_DB_USERNAME: process.env.DEV_DB_USERNAME,
+    DEV_DB_PASSWORD: process.env.DEV_DB_PASSWORD,
+    DEV_DB_NAME: process.env.DEV_DB_NAME
+});
+
 const dev = {
     app: {
         port: process.env.DEV_APP_PORT || 3000,
     },
     db: {
-        protocol: process.env.DEV_DB_PROTOCOL,
+        protocol: process.env.DEV_DB_PROTOCOL || 'mongodb+srv',
         username: process.env.DEV_DB_USERNAME,
         password: process.env.DEV_DB_PASSWORD,
         dbName: process.env.DEV_DB_NAME,
