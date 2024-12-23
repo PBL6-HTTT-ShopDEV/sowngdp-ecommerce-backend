@@ -51,7 +51,23 @@ class TourController {
   }
 
   static async getTourById(req, res, next) {
-    const tour = await TourService.getTourById(req.query.id);
+
+    console.log('\n[Controller] 📥 Request:', {
+      params: req.params,
+      query: req.query,
+      url: req.url,
+      headers: {
+        'x-api-key': req.headers['x-api-key']?.slice(0, 10) + '...',
+        'content-type': req.headers['content-type']
+      }
+    });
+
+    const tour = await TourService.getTourById(req.query.tourId);
+    console.log('[Controller] 📦 Response:', {
+      found: !!tour,
+      tourId: tour?._id
+    });
+
     return new Success({
       message: "Get tour by id success!",
       metadata: tour,

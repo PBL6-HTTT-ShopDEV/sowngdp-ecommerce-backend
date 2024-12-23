@@ -1,3 +1,8 @@
 node_modules
 .env
 makeBucket.js
+.env.development
+.env.production
+package-lock.json
+package.json
+tsconfig.json

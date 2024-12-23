@@ -1,13 +1,21 @@
 'use strict'
 
 const mongoose = require('mongoose');
-const { db: { protocol, username, password, dbName } } = require('../configs/config.mongodb');
-let user_name = encodeURIComponent(username);
-let pass_word = encodeURIComponent(password);
-console.log(user_name)
-console.log(pass_word)
-console.log(dbName)
-const connectString = `${protocol}://${user_name}:${pass_word}@${dbName}.5ixeh.mongodb.net/tour-booking?retryWrites=true&w=majority&ssl=true&appName=Tour-booking`;
+require('dotenv').config();
+
+// Lấy trực tiếp từ process.env thay vì qua config
+const username = process.env.DEV_DB_USERNAME;
+const password = process.env.DEV_DB_PASSWORD;
+const dbName = process.env.DEV_DB_NAME;
+
+console.log('MongoDB Config:', { 
+    username: username,
+    dbName: dbName 
+});
+
+const connectString = `mongodb+srv://${username}:${password}@${dbName}.hcbzs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
+console.log('Connection String:', connectString.replace(password, '****'));
 
 class Database {
     constructor() {
@@ -16,23 +24,21 @@ class Database {
 
     connect() {
         mongoose.connect(connectString)
-            .then( _ => {
+            .then(_ => {
                 console.log(`Connected Mongodb Success!`);
             })
-            .catch( err => {
-                console.log(`Error connect!: ${err}`);
-            } )
+            .catch(err => {
+                console.log(`Error connect!:`, err);
+            })
     };
 
     static getInstance() {
         if(!Database.instance) {
             Database.instance = new Database();
         };
-
         return Database.instance;
     }
 }
 
 const instanceMongodb = Database.getInstance();
-
 module.exports = instanceMongodb;
