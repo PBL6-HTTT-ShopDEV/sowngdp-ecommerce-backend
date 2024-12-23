@@ -18,6 +18,11 @@ const tourSchema = new Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["available", "unavailable"],
+      default: "available",
+    },
     price: {
       type: Number,
       required: true,
@@ -85,23 +90,3 @@ const tourSchema = new Schema(
 
 // Export the model
 module.exports = mongoose.model(DOCUMENT_NAME, tourSchema, COLLECTION_NAME);
-
-// example json file to import to database
-// {
-//     "name": "Tour 1",
-//     "destination": "Vietnam",
-//     "description": "Tour 1 description",
-//     "price": 1000,
-//     "start_date": "2021-01-01",
-//     "end_date": "2021-01-10",
-//     "departure_location": "Hanoi",
-//     "categories": ["5f7d2e9f5b1b4b0017f4e0f4"],
-//     "image_url": ["https://www.google.com"],
-//     "thumbnail_url": "https://www.google.com",
-//     "created_by": "5f7d2e9f5b1b4b0017f4e0f4",
-//     "reviews": [],
-//     "bookings": [],
-//     "average_review_star": 0,
-//     "max_group_size": 10
-// }
-//

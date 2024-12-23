@@ -11,6 +11,16 @@ const HEADER = {
 };
 
 class TourController {
+  static async addFavoriteTour(req, res, next) {
+    const { tourId } = req.query;
+    const userId = req.headers[HEADER.CLIENT_ID];
+    const tour = await TourService.addFavoriteTour(userId, tourId);
+    return new Success({
+      message: "Add favorite tour success!",
+      metadata: tour,
+    }).send(res);
+  }
+
   static async getAllTour(req, res, next) {
     const tours = await TourService.getAllTour();
     if (!tours) {
@@ -26,16 +36,22 @@ class TourController {
   }
 
   static async getTours(req, res, next) {
-      const { page, limit, categoryId, price } = req.query;
-      console.log(page,limit, categoryId, price);
-      const tours = await TourService.getTours({ page, limit, categoryId, price });
-      return new Success({
-        message: "Get tours with pagination success!",
-        metadata: tours,
-      }).send(res);
+    const { page, limit, categoryId, price } = req.query;
+    console.log(page, limit, categoryId, price);
+    const tours = await TourService.getTours({
+      page,
+      limit,
+      categoryId,
+      price,
+    });
+    return new Success({
+      message: "Get tours with pagination success!",
+      metadata: tours,
+    }).send(res);
   }
 
   static async getTourById(req, res, next) {
+
     console.log('\n[Controller] 📥 Request:', {
       params: req.params,
       query: req.query,
@@ -100,7 +116,20 @@ class TourController {
   }
 
   static async updateTour(req, res, next) {
-    const tour = await TourService.updateTour(req.params.id, req.body);
+    const tourData = req.body;
+    const files = req.files;
+    const userId = req.headers[HEADER.CLIENT_ID];
+
+    const thumbnailFile = files["thumbnail"] ? files["thumbnail"][0] : null;
+    console.log("thumbnailFile", thumbnailFile);
+    const imageFiles = files["images"] || [];
+    const tour = await TourService.updateTour(
+      req.query.id,
+      tourData,
+      thumbnailFile,
+      imageFiles,
+      userId
+    );
     return new Success({
       message: "Update tour success!",
       metadata: tour,
@@ -108,17 +137,12 @@ class TourController {
   }
 
   static async deleteTour(req, res, next) {
-    const tour = await TourService.deleteTour(req.params.id);
+    const tour = await TourService.deleteTour(req.query.id);
     return new Success({
       message: "Delete tour success!",
       metadata: tour,
     }).send(res);
   }
-
-  // example json body for delete tour
-  // {
-  //     "tourId": "5f7d2e9f5b1b4b0017f4e0f4"
-  // }
 
   static async getTourByCategory(req, res, next) {
     const tours = await TourService.getTourByCategory(req.params.categoryId);

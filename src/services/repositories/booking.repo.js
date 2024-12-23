@@ -1,43 +1,126 @@
-'use strict';
+// src/services/repositories/booking.repo.js
+"use strict";
 
-const bookingModel = require('../../models/booking.model')
+const bookingModel = require("../../models/booking.model");
 
 class BookingRepo {
-    static async getAllBooking() {
-        const bookings = await bookingModel.find().lean();
-        return bookings;
-    }
+  static async countDocuments(query) {
+    return await bookingModel.countDocuments(query);
+  }
+  // Aggregate operations
+  static async aggregate(pipeline) {
+    return await bookingModel.aggregate(pipeline);
+  }
+  // Basic CRUD operations
+  static async getAllBooking() {
+    return await bookingModel
+      .find()
+      .populate("tour", "name price thumbnail_url destination")
+      .populate("user", "name email")
+      .lean();
+  }
 
-    static async getBookings(query) {
-        const bookings = await bookingModel.find(query).lean();
-        return bookings;
-    }
+  static async getBookingById(id) {
+    const query = {};
+    if (id) query._id = id;
+    return await bookingModel
+      .findOne(query)
+      .populate("tour", "name price thumbnail_url destination")
+      .populate("user", "name email")
+      .lean();
+  }
 
-    static async getBookingById(id) {
-        const booking = await bookingModel.findById(id).lean();
-        return booking;
-    }
+  static async getBookings(query) {
+    return await bookingModel
+      .find(query)
+      .populate("tour", "name price thumbnail_url destination")
+      .populate("user", "name email")
+      .lean();
+  }
 
-    static async getBookingByTourId(tourId) {
-        const booking = await bookingModel.find({ tour: tourId }).lean();
-        return booking;
-    }
+  static async getBookingToday() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return await bookingModel
+      .find({
+        created_at: {
+          $gte: today,
+          $lt: tomorrow,
+        },
+      })
+      .populate("tour", "name price thumbnail_url destination")
+      .populate("user", "name email")
+      .lean();
+  }
 
-    static async createBooking(data, userId) {
-        const booking = await bookingModel.create({ ...data, user: userId });
-        return booking;
-    }
+  static async createBooking(data) {
+    const booking = await bookingModel.create(data);
+    return await booking.populate([
+      { path: "tour", select: "name price thumbnail_url destination" },
+      { path: "user", select: "name email" },
+    ]);
+  }
 
-    static async updateBooking(id, data) {
-        const booking = await bookingModel.findByIdAndUpdate(id, data, { new: true });
-        return booking;
-    }
+  static async updateBooking(id, data) {
+    const booking = await bookingModel
+      .findByIdAndUpdate(id, data, { new: true })
+      .populate([
+        { path: "tour", select: "name price thumbnail_url destination" },
+        { path: "user", select: "name email" },
+      ]);
+    return booking;
+  }
 
-    static async deleteBooking(id) {
-        const booking = await bookingModel.findByIdAndDelete(id);
-        return booking;
-    }
+  static async deleteBooking(id) {
+    return await bookingModel.findByIdAndDelete(id);
+  }
+
+  // Specialized queries
+  static async getBookingByUserId(userId) {
+    return await bookingModel
+      .find({ user: userId })
+      .populate("tour", "name price thumbnail_url destination")
+      .lean();
+  }
+
+  static async getBookingByTourId(tourId) {
+    return await bookingModel
+      .find({ tour: tourId })
+      .populate("user", "name price thumbnail_url destination")
+      .lean();
+  }
+
+  static async checkExistingBookings(tourId, userId) {
+    return await bookingModel
+      .findOne({
+        tour: tourId,
+        user: userId,
+        status: { $in: ["pending", "success"] },
+      })
+      .lean();
+  }
+
+  static async getBookingsByDateRange(tourId, startDate, endDate) {
+    return await bookingModel
+      .find({
+        tour: tourId,
+        created_at: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+        status: { $ne: "cancelled" },
+      })
+      .lean();
+  }
+
+  static async countActiveBookings(tourId) {
+    return await bookingModel.countDocuments({
+      tour: tourId,
+      status: { $in: ["pending", "success"] },
+    });
+  }
 }
-
 
 module.exports = BookingRepo;

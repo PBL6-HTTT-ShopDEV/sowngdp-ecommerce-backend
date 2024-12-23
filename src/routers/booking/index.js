@@ -5,22 +5,48 @@ const express = require("express");
 const router = express.Router();
 const { asyncHandler, authenticationV2 } = require("../../auth/authUtils");
 
-// router.get("/bookings", asyncHandler(BookingController.getAllBooking));
-router.get("/bookings", asyncHandler(BookingController.getBookings));
-router.get("/booking/:id", asyncHandler(BookingController.getBookingById));
-router.get("/booking", asyncHandler(BookingController.getBookingByTourId)); //example url : http://localhost:3055/v1/api/booking?tourid=663a91b18d40b8bc1b388b4d
-router.post("/booking", asyncHandler(BookingController.createBooking)); //example url : http://localhost:3055/v1/api/booking
-// example json data for create booking :
-// {
-//   "tour": "663a91b18d40b8bc1b388b4d",
-//   "date": "2024-05-01",
-//   "quantity": 2
-//   "price": 100
-//   "paid": true
-// }
+// Public routes
+router.get(
+  "/bookings/tour/:tourId",
+  asyncHandler(BookingController.getBookingByTourId)
+);
+router.get(
+  "/bookings/availability/:tourId",
+  asyncHandler(BookingController.checkAvailability)
+);
 
-router.post("/bookings", asyncHandler(BookingController.createMultipleBooking));
-router.put("/:id", asyncHandler(BookingController.updateBooking));
-router.delete("/:id", asyncHandler(BookingController.deleteBooking));
+// Protected routes - require authentication
+// router.use(asyncHandler(authenticationV2));
+
+// Booking management
+router.get("/bookings", asyncHandler(BookingController.getAllBooking));
+router.get("/bookings/:id", asyncHandler(BookingController.getBookingById)); // example: /bookings/123
+router.post("/bookings", asyncHandler(BookingController.createBooking)); // example: /bookings?tourId=123
+router.put("/bookings", asyncHandler(BookingController.updateBooking));
+router.delete("/bookings", asyncHandler(BookingController.cancelBooking));
+
+// User specific bookings
+router.get(
+  "/bookings/user/me",
+  asyncHandler(BookingController.getBookingsByUser)
+);
+
+// get booking by time
+router.get(
+  "/bookings/by-time/time", // Changed from /bookings/time/:time
+  asyncHandler(BookingController.getBookingByTime)
+);
+
+router.get("/bookings/today", asyncHandler(BookingController.getBookingToday));
+
+// Booking payment and confirmation
+router.post(
+  "/bookings/:id/payment",
+  asyncHandler(BookingController.processPayment)
+);
+// router.post(
+//   "/bookings/:id/confirm",
+//   asyncHandler(BookingController.confirmBooking)
+// );
 
 module.exports = router;

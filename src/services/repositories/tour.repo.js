@@ -24,6 +24,12 @@ class TourRepo {
   }
 
   static async getTours(page, limit, categoryId, price) {
+    if (!page) {
+      page = 1;
+    }
+    if (!limit) {
+      limit = 10;
+    }
     const skip = (page - 1) * limit;
     const query = {};
 
@@ -56,7 +62,6 @@ class TourRepo {
     const tour = await tourModel.findByIdAndDelete(id);
     return tour;
   }
-
 }
 
 module.exports = TourRepo;
