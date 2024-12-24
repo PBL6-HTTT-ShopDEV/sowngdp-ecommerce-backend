@@ -28,6 +28,10 @@ class BookingService {
 
   static async createBooking(bookingData, userId) {
     // Validate tour exists
+    console.log("=== BookingService.createBooking ===");
+    console.log("Booking data:", bookingData);
+    console.log("User ID:", userId);
+    console.log("Tour ID:", bookingData.tour);
     const tour = await TourService.getTourById(bookingData.tour);
     if (!tour) {
       throw new NotFoundError("Tour not found");

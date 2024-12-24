@@ -17,7 +17,11 @@ class TourService {
   }
 
   static async getTourById(id) {
+    console.log("=== TourService.getTourById ===");
+    console.log("Looking for tour with ID:", id);
+    console.log("ID type:", typeof id);
     const tour = await tourRepo.getTourById(id);
+    console.log("Tour found:", !!tour);
     if (!tour) {
       throw new NotFoundError("Tour not found!");
     }
@@ -129,6 +133,17 @@ class TourService {
 
   static async getTourByLocationAndPrice(locationId, price) {
     return await tourRepo.getTourByLocationAndPrice(locationId, price);
+  }
+
+  static async createBooking(bookingData, userId) {
+    console.log("=== BookingService.createBooking ===");
+    console.log("Booking data:", bookingData);
+    console.log("User ID:", userId);
+    console.log("Tour ID:", bookingData.tour);
+
+    // Validate tour exists
+    const tour = await TourService.getTourById(bookingData.tour);
+    // ...rest of the code
   }
 }
 
