@@ -25,9 +25,9 @@ class TourService {
   }
 
   static async getTours(filter) {
-    const { page, limit, categoryId, price } = filter; // Đặt giá trị mặc định cho page và limit
-    console.log(page, limit, categoryId, price);
-    return await tourRepo.getTours(page, limit, categoryId, price);
+    const { page, limit, categoryId, price, destination } = filter; // Đặt giá trị mặc định cho page và limit
+    console.log(page, limit, categoryId, price, destination);
+    return await tourRepo.getTours(page, limit, categoryId, price, destination);
   }
 
   static async createTour(tourData, thumbnailFile, imageFiles, userId) {

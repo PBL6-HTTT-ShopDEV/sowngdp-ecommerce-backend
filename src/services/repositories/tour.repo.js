@@ -14,7 +14,7 @@ class TourRepo {
     return tour;
   }
 
-  static async getTours(page, limit, categoryId, price) {
+  static async getTours(page, limit, categoryId, price, destination) {
     if (!page) {
       page = 1;
     }
@@ -29,6 +29,9 @@ class TourRepo {
     }
     if (price) {
       query.price = { $lte: price };
+    }
+    if (destination) {
+      query.destination = { $lte: price}
     }
 
     const tours = await tourModel

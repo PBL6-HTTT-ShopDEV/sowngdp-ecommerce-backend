@@ -36,13 +36,14 @@ class TourController {
   }
 
   static async getTours(req, res, next) {
-    const { page, limit, categoryId, price } = req.query;
+    const { page, limit, categoryId, price, destination } = req.query;
     console.log(page, limit, categoryId, price);
     const tours = await TourService.getTours({
       page,
       limit,
       categoryId,
       price,
+      destination,
     });
     return new Success({
       message: "Get tours with pagination success!",
