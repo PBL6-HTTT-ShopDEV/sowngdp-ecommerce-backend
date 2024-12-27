@@ -1,12 +1,17 @@
 "use strict";
 
 const tourRepo = require("./repositories/tour.repo");
+const accountService = require("./account.service");
 
 const { NotFoundError } = require("../core/error.response");
 
 const FirebaseStorage = require("../helpers/firebase.storage");
 
 class TourService {
+  static async addFavoriteTour(userId, tourId) {
+    return await accountService.addFavoriteTour(userId, tourId);
+  }
+
   static async getAllTour() {
     return await tourRepo.getAllTour();
   }
@@ -20,9 +25,9 @@ class TourService {
   }
 
   static async getTours(filter) {
-    const { page, limit, categoryId, price } = filter; // Đặt giá trị mặc định cho page và limit
-    console.log(page, limit, categoryId, price);
-    return await tourRepo.getTours(page, limit, categoryId, price);
+    const { page, limit, categoryId, price, destination } = filter; // Đặt giá trị mặc định cho page và limit
+    console.log(page, limit, categoryId, price, destination);
+    return await tourRepo.getTours(page, limit, categoryId, price, destination);
   }
 
   static async createTour(tourData, thumbnailFile, imageFiles, userId) {
@@ -38,7 +43,7 @@ class TourService {
     // Upload images array
     if (imageFiles.length > 0) {
       const firebaseStorage = FirebaseStorage.getInstance();
-      const imageUrls = await firebaseStorage.uploadImage(imageFiles);
+      const imageUrls = await firebaseStorage.uploadImages(imageFiles);
       tourData.image_url = imageUrls;
     } else {
       tourData.images = []; // Or handle as per your requirements
@@ -56,7 +61,25 @@ class TourService {
     return tour;
   }
 
-  static async updateTour(id, data) {
+  static async updateTour(id, data, thumbnailFile, imageFiles, userId) {
+    // Upload thumbnail
+    const oldTour = await tourRepo.getTourById(id);
+    if (thumbnailFile) {
+      const firebaseStorage = FirebaseStorage.getInstance();
+      const thumbnailUrl = await firebaseStorage.updateImage(
+        oldTour.thumbnail_url,
+        thumbnailFile
+      );
+      data.thumbnail_url = thumbnailUrl;
+    }
+    if (imageFiles.length > 0) {
+      const firebaseStorage = FirebaseStorage.getInstance();
+      const imageUrls = await firebaseStorage.updateImages(
+        oldTour.image_url,
+        imageFiles
+      );
+      data.image_url = imageUrls;
+    }
     const tour = await tourRepo.updateTour(id, data);
     if (!tour) {
       throw new NotFoundError("Tour not found!");
