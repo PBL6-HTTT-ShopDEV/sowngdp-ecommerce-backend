@@ -37,7 +37,10 @@ router.get(
   asyncHandler(BookingController.getBookingByTime)
 );
 
-router.get("/bookings/today", asyncHandler(BookingController.getBookingToday));
+router.get(
+  "/bookings/today/day",
+  asyncHandler(BookingController.getBookingToday)
+);
 
 // Booking payment and confirmation
 router.post(

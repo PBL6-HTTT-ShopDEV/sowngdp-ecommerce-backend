@@ -38,14 +38,22 @@ class BookingRepo {
       .lean();
   }
 
-  static async getBookingToday() {
+  static async getBookingToday(page, limit) {
+    // const today = new Date();
+    // today.setHours(0, 0, 0, 0);
+    // today.setDate(today.getDate() + 1);
+    // const tomorrow = new Date(today);
+    // tomorrow.setDate(tomorrow.getDate() + 1);
+    // const skip = (page - 1) * limit;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
+    console.log(today, tomorrow);
+
     return await bookingModel
       .find({
-        created_at: {
+        updatedAt: {
           $gte: today,
           $lt: tomorrow,
         },

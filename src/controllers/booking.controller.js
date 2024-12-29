@@ -23,7 +23,8 @@ class BookingController {
   }
 
   static async getBookingToday(req, res, next) {
-    const bookings = await BookingService.getBookingToday();
+    const { page = 1, limit = 10 } = req.query;
+    const bookings = await BookingService.getBookingToday(page, limit);
     return new Success({
       message: "Get today's bookings success!",
       metadata: bookings,

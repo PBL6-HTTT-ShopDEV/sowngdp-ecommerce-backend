@@ -22,8 +22,8 @@ class BookingService {
     return await BookingRepo.getBookingByTourId(tourId);
   }
 
-  static async getBookingToday() {
-    return await BookingRepo.getBookingToday();
+  static async getBookingToday(page, limit) {
+    return await BookingRepo.getBookingToday(page, limit);
   }
 
   static async createBooking(bookingData, userId) {
